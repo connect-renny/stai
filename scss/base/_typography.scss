@@ -1,0 +1,146 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Typography
+// ═══════════════════════════════════════════════════════════════════════════
+
+body {
+  font-family: var(--body-font);
+  font-weight: var(--fw-normal);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0 0 var(--space-sm);
+  font-family: var(--heading-font);
+  font-weight: var(--fw-bold);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-tight);
+  color: var(--color-heading);
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--fs-fluid-6xl); }
+h2 { font-size: var(--fs-fluid-5xl); }
+h3 { font-size: var(--fs-fluid-3xl); }
+h4 { font-size: var(--fs-fluid-2xl); }
+h5 { font-size: var(--fs-fluid-xl); }
+h6 { font-size: var(--fs-fluid-lg); }
+
+p {
+  margin: 0 0 var(--space-sm);
+  text-wrap: pretty;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.lead {
+  max-width: 68ch;
+  font-size: var(--fs-fluid-lg);
+  color: var(--color-text-muted);
+}
+
+.text-muted {
+  color: var(--color-text-muted) !important;
+}
+
+// Technical label voice — used everywhere for small HUD-style text.
+.mono {
+  font-family: var(--mono-font);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-normal);
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+}
+
+// Gradient ink for the emphasised half of a headline.
+.grad {
+  background: var(--grad-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dim {
+  color: var(--color-text-dim);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+  @include transEase(color);
+  @include focus-ring;
+
+  @include hover {
+    color: var(--color-link-hover);
+  }
+}
+
+button {
+  @include focus-ring;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+kbd {
+  padding: 2px 6px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 4px;
+  font-family: var(--mono-font);
+  font-size: 0.9em;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+
+code,
+pre,
+samp {
+  font-family: var(--mono-font);
+  font-size: 0.9em;
+}
+
+hr {
+  height: 1px;
+  margin: var(--space-lg) 0;
+  border: 0;
+  background: var(--color-border);
+  opacity: 1;
+}
+
+::selection {
+  color: var(--color-bg);
+  background: var(--cyan);
+}
+
+// ─── Scrollbar ─────────────────────────────────────────────────────────────
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--violet-rgb) / 60%) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--violet-rgb) / 60%);
+  border-radius: 4px;
+}

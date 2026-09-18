@@ -1,0 +1,26 @@
+@use "../abstracts" as *;
+
+.container,
+.container-fluid {
+  padding-inline: var(--container-gutter);
+
+  @include mq-up("xxxl") {
+    max-width: var(--container-max);
+  }
+}
+
+// Slightly wider than .container — for the panels and sliders that want
+// more breathing room but still shouldn't touch the viewport edge.
+.container-wide {
+  width: 100%;
+  max-width: calc(var(--container-max) + 120px);
+  margin-inline: auto;
+  padding-inline: var(--container-gutter);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding-inline: var(--container-gutter);
+}

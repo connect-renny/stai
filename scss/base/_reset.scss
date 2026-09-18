@@ -1,0 +1,127 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Reset additions
+//  Bootstrap's Reboot already runs before this file, so these are only the
+//  things Reboot doesn't do (or doesn't do the way we want).
+// ═══════════════════════════════════════════════════════════════════════════
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  min-width: 0; // stops flex/grid children refusing to shrink below content
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100svh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip; // clip, not hidden — doesn't break position: sticky
+}
+
+// Media defaults to block so it never sits on a text baseline with a gap.
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+// Inputs don't inherit fonts by default in every browser.
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+// Kill the number-input spinners.
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+// Long words and URLs shouldn't blow out a container.
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+li,
+dd,
+dt {
+  overflow-wrap: break-word;
+}
+
+// Anchors targeted by an in-page link land below the fixed header.
+:target {
+  scroll-margin-top: calc(var(--header-height-fixed) + var(--space-md));
+}
+
+// ─── Reduced motion ────────────────────────────────────────────────────────
+// Respect the OS setting. main.js mirrors this check so it can skip Lenis
+// and AOS entirely, rather than just neutering their CSS.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// ─── Print ─────────────────────────────────────────────────────────────────
+@media print {
+  .navbar-main,
+  .return-top,
+  .loader-overlay,
+  .skip-link,
+  .footer {
+    display: none !important;
+  }
+
+  body {
+    color: #000;
+    background: #fff;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    word-break: break-all;
+  }
+}

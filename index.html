@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>STAI 2026 — Future World</title>
+    <meta
+      name="description"
+      content="STAI 2026 · Science · Technology · Innovation. Enter the Future World — six worlds, one Future Lab, and a day where ideas become inventions."
+    />
+    <meta name="theme-color" content="#060913" />
+
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="assets/css/swiper-bundle.css" />
+    <!-- style.css last — it owns the tokens everything above is themed with. -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <script>
+      document.documentElement.classList.replace("no-js", "js");
+    </script>
+  </head>
+
+  <body class="is-gated">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Global atmosphere: grain + faint grid -->
+    <div class="atmos" aria-hidden="true">
+      <div class="atmos__grid"></div>
+      <div class="atmos__grain"></div>
+    </div>
+
+    <!-- Custom cursor (desktop, fine pointer only) -->
+    <div class="cursor" aria-hidden="true">
+      <div class="cursor__dot"></div>
+      <div class="cursor__ring"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         PRELOADER — wordmark over a filling bar, counter bottom-right.
+         main.js (App.preloader) wipes it up on `load` (min 2.4s, 5s failsafe),
+         then releases the gate title's blur reveal and starts the video. -->
+    <div class="loader-overlay" id="loader" aria-hidden="true">
+      <p class="loader-tag mono"><span class="hud-dot"></span>STAI 2026 · Future World</p>
+      <div class="loader">
+        <p class="loader-mark" aria-hidden="true">
+          <span class="loader-mark__solid">FUTURE</span>
+          <span class="loader-mark__outline">WORLD</span>
+        </p>
+        <p class="loader-line mono">Initialising future world<span class="loader-dots"></span></p>
+      </div>
+      <p class="loader-count mono"><span id="loaderNum">000</span><span class="loader-count__suffix">%</span></p>
+      <span class="loader-bar" aria-hidden="true"><span class="loader-bar__fill" id="loaderBar"></span></span>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         GATE — the opening screen
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="gate is-held" id="gate">
+      <!-- Landing video backdrop (assets/videos/landing.mp4) -->
+      <!-- No `autoplay`: App.preloader starts it once the overlay lifts. -->
+      <video class="gate__video" id="gateVideo" muted loop playsinline preload="auto" aria-hidden="true">
+        <source src="assets/videos/landing.mp4" type="video/mp4" />
+      </video>
+      <div class="gate__veil" aria-hidden="true"></div>
+      <div class="gate__nebula" aria-hidden="true"></div>
+
+      <!-- HUD labels -->
+      <div class="gate__hud gate__hud--tl mono">
+        <span>STAI</span><span class="hud-sep"></span><span>2026</span>
+      </div>
+      <div class="gate__hud gate__hud--tr mono">
+        <span class="hud-dot"></span><span>SYS.STATUS — STANDBY</span>
+      </div>
+      <div class="gate__hud gate__hud--bl mono">
+        <span>23.59° N</span><span class="hud-sep"></span><span>58.54° E</span>
+      </div>
+      <div class="gate__hud gate__hud--br mono">
+        <span id="gateClock">00:00:00</span>
+      </div>
+      <div class="gate__frame" aria-hidden="true"></div>
+
+      <!-- Center content -->
+      <div class="gate__content" id="gateContent">
+        <p class="gate__kicker mono blur-after" style="--i: 2">
+          <span>STAI 2026</span>
+          <span class="gate__kicker-sep">·</span>
+          <span>Science</span><i>•</i><span>Technology</span><i>•</i><span>Innovation</span>
+        </p>
+
+        <h1 class="gate__title" aria-label="Future World">
+          <span class="gate__word gate__word--solid blur-line" data-text="FUTURE">FUTURE</span>
+          <span class="gate__word gate__word--outline blur-line" data-text="WORLD">WORLD</span>
+        </h1>
+
+        <p class="gate__tag blur-after" style="--i: 3">
+          The future isn't something we wait for.<br />
+          <em>It's something we create.</em>
+        </p>
+
+        <!-- Wrapper carries the reveal so the button keeps its own magnetic transform. -->
+        <div class="gate__cta blur-after" style="--i: 4">
+          <button class="enter" id="enterBtn" type="button" data-cursor="hover">
+            <span class="enter__glow" aria-hidden="true"></span>
+            <span class="enter__body">
+              <span class="enter__label">Enter the Future</span>
+              <span class="enter__arrow" aria-hidden="true">
+                <i class="bi bi-arrow-right"></i>
+              </span>
+            </span>
+          </button>
+        </div>
+
+        <p class="gate__hint mono blur-after" style="--i: 5">Press <kbd>Enter</kbd> or click to begin</p>
+      </div>
+
+      <!-- Boot sequence -->
+      <div class="boot" id="boot" aria-live="polite">
+        <div class="boot__inner">
+          <div class="boot__log mono" id="bootLog"></div>
+          <div class="boot__counter">
+            <span class="boot__num" id="bootNum">000</span><span class="boot__pct">%</span>
+          </div>
+          <div class="boot__bar" aria-hidden="true">
+            <span class="boot__bar-fill" id="bootBar"></span>
+            <span class="boot__bar-segments"></span>
+          </div>
+          <div class="boot__status" id="bootStatus">
+            <span class="boot__status-line mono">System online</span>
+            <span class="boot__status-title">Welcome to STAI 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════════════
+         SITE
+         ══════════════════════════════════════════════════════════════════ -->
+    <div class="site" id="site">
+      <!-- Header -->
+      <header class="header" id="header">
+        <div class="header__inner">
+          <a class="brand" href="#top" aria-label="STAI 2026 home">
+            <span class="brand__mark">STAI</span>
+            <span class="brand__meta">
+              <span class="brand__year mono">2026</span>
+              <span class="brand__line">Science · Technology · Innovation</span>
+            </span>
+          </a>
+
+          <nav class="nav" aria-label="Primary">
+            <a href="#worlds" class="nav__link"><span class="mono">01</span>Worlds</a>
+            <a href="#lab" class="nav__link"><span class="mono">02</span>Future Lab</a>
+            <a href="#mission" class="nav__link"><span class="mono">03</span>Mission</a>
+            <a href="#makers" class="nav__link"><span class="mono">04</span>Makers</a>
+            <a href="#vote" class="nav__link"><span class="mono">05</span>Vote</a>
+            <a href="#countdown" class="nav__link"><span class="mono">06</span>Countdown</a>
+            <a href="#live" class="nav__link"><span class="mono">07</span>Live</a>
+          </nav>
+
+          <div class="header__actions">
+            <!-- <a href="#register" class="btn btn--ghost btn--sm" data-cursor="hover">
+              <span>Register</span><i class="bi bi-arrow-up-right"></i>
+            </a> -->
+            <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+              <span></span><span></span>
+            </button>
+          </div>
+        </div>
+        <div class="header__progress" id="scrollProgress" aria-hidden="true"></div>
+      </header>
+
+      <!-- Mobile drawer -->
+      <div class="drawer" id="drawer" aria-hidden="true">
+        <div class="drawer__inner">
+          <p class="mono drawer__kicker">STAI 2026 — Navigation</p>
+          <nav class="drawer__nav" aria-label="Mobile">
+            <a href="#worlds"><span class="mono">01</span>Worlds</a>
+            <a href="#lab"><span class="mono">02</span>Future Lab</a>
+            <a href="#mission"><span class="mono">03</span>Mission Control</a>
+            <a href="#makers"><span class="mono">04</span>Future Makers</a>
+            <a href="#vote"><span class="mono">05</span>Build the Future</a>
+            <a href="#countdown"><span class="mono">06</span>Countdown</a>
+            <a href="#live"><span class="mono">07</span>On the Day</a>
+          </nav>
+          <a href="#register" class="btn btn--primary drawer__cta">
+            <span>Register</span><i class="bi bi-arrow-up-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <main id="main">
+        <span id="top"></span>
+
+        <!-- ─── 01 · THE THEME ────────────────────────────────────────── -->
+        <section class="theme" id="theme">
+          <div class="theme__bg" aria-hidden="true">
+            <div class="theme__orb theme__orb--cyan"></div>
+            <div class="theme__orb theme__orb--violet"></div>
+          </div>
+
+          <div class="container">
+            <div class="theme__top">
+              <p class="label mono" data-reveal="fade">
+                <span class="label__num">01</span>
+                <span class="label__line"></span>
+                <span>The main question</span>
+              </p>
+              <p class="mono theme__aside" data-reveal="fade" style="--reveal-delay: 120ms">
+                What is the future?
+              </p>
+            </div>
+
+            <h2 class="theme__title" data-split>
+              <span class="line">The future is</span>
+              <span class="line"><span class="grad">not one thing.</span></span>
+            </h2>
+
+            <div class="theme__row">
+              <p class="theme__body" data-reveal>
+                From artificial intelligence to space exploration, from biotechnology to
+                sustainable cities — the future is being shaped by thousands of ideas at once.
+                <strong>STAI brings those ideas together.</strong>
+              </p>
+              <a href="#worlds" class="theme__scroll mono" data-reveal style="--reveal-delay: 150ms" data-cursor="hover">
+                <span>Explore six worlds</span>
+                <span class="theme__scroll-line"></span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Ticker -->
+          <div class="ticker" aria-hidden="true">
+            <div class="ticker__track">
+              <span><i class="bi bi-cpu"></i>Artificial Intelligence</span>
+              <span><i class="bi bi-rocket-takeoff"></i>Space</span>
+              <span><i class="bi bi-activity"></i>Biotechnology</span>
+              <span><i class="bi bi-lightning-charge"></i>Energy</span>
+              <span><i class="bi bi-tree"></i>Climate</span>
+              <span><i class="bi bi-buildings"></i>Smart Cities</span>
+              <span><i class="bi bi-cpu"></i>Artificial Intelligence</span>
+              <span><i class="bi bi-rocket-takeoff"></i>Space</span>
+              <span><i class="bi bi-activity"></i>Biotechnology</span>
+              <span><i class="bi bi-lightning-charge"></i>Energy</span>
+              <span><i class="bi bi-tree"></i>Climate</span>
+              <span><i class="bi bi-buildings"></i>Smart Cities</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 02 · SIX WORLDS ───────────────────────────────────────── -->
+        <section class="worlds" id="worlds">
+          <div class="container">
+            <div class="section-head">
+              <p class="label mono" data-reveal="fade">
+                <span class="label__num">02</span>
+                <span class="label__line"></span>
+                <span>Six future worlds</span>
+              </p>
+              <h2 class="section-title" data-reveal>
+                One future. <span class="dim">Six ways in.</span>
+              </h2>
+              <p class="section-body" data-reveal style="--reveal-delay: 100ms">
+                Every world begins with a question. Hover or tap a world to open it.
+              </p>
+            </div>
+          </div>
+
+          <div class="container-wide">
+            <div class="panels" id="panels">
+              <!-- W.01 AI -->
+              <article class="panel is-active" data-world="ai" style="--accent: #5ef2ff">
+                <div class="panel__art" aria-hidden="true">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                    <defs>
+                      <pattern id="dots-ai" width="28" height="28" patternUnits="userSpaceOnUse">
+                        <circle cx="2" cy="2" r="1.4" fill="currentColor" />
+                      </pattern>
+                    </defs>
+                    <rect width="400" height="600" fill="url(#dots-ai)" opacity=".35" />
+                    <g class="art-net" fill="none" stroke="currentColor" stroke-width="1">
+                      <path d="M80 140 L200 220 L320 150 M200 220 L120 360 L280 340 L200 220 M120 360 L200 480 L280 340 M80 140 L120 360 M320 150 L280 340" />
+                    </g>
+                    <g fill="currentColor" class="art-nodes">
+                      <circle cx="80" cy="140" r="5" /><circle cx="200" cy="220" r="7" />
+                      <circle cx="320" cy="150" r="5" /><circle cx="120" cy="360" r="5" />
+                      <circle cx="280" cy="340" r="6" /><circle cx="200" cy="480" r="5" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="panel__meta mono">
+                  <span>W.01</span>
+                  <span class="panel__q">How will intelligent machines change the way we live?</span>
+                </div>
+                <div class="panel__side">
+                  <span class="panel__side-num mono">W.01</span>
+                  <span class="panel__side-title">Artificial Intelligence</span>
+                </div>
+                <div class="panel__body">
+                  <span class="panel__icon"><i class="bi bi-cpu"></i></span>
+                  <h3 class="panel__title">Artificial<br />Intelligence</h3>
+                  <p class="panel__text">How will intelligent machines change the way we live?</p>
+                </div>
+              </article>
+
+              <!-- W.02 SPACE -->
+              <article class="panel" data-world="space" style="--accent: #9d7bff">
+                <div class="panel__art" aria-hidden="true">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                    <g fill="none" stroke="currentColor" stroke-width="1" class="art-orbits">
+                      <ellipse cx="200" cy="300" rx="60" ry="60" />
+                      <ellipse cx="200" cy="300" rx="120" ry="120" stroke-dasharray="3 8" />
+                      <ellipse cx="200" cy="300" rx="190" ry="190" />
+                      <ellipse cx="200" cy="300" rx="270" ry="270" stroke-dasharray="1 6" />
+                    </g>
+                    <g fill="currentColor">
+                      <circle cx="200" cy="300" r="10" />
+                      <circle cx="320" cy="300" r="4" class="art-sat" />
+                      <circle cx="90" cy="220" r="3" />
+                      <circle cx="330" cy="470" r="2" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="panel__meta mono">
+                  <span>W.02</span>
+                  <span class="panel__q">What happens when humanity goes beyond Earth?</span>
+                </div>
+                <div class="panel__side">
+                  <span class="panel__side-num mono">W.02</span>
+                  <span class="panel__side-title">Space</span>
+                </div>
+                <div class="panel__body">
+                  <span class="panel__icon"><i class="bi bi-rocket-takeoff"></i></span>
+                  <h3 class="panel__title">Space</h3>
+                  <p class="panel__text">What happens when humanity goes beyond Earth?</p>
+                </div>
+              </article>
+
+              <!-- W.03 BIOTECH -->
+              <article class="panel" data-world="bio" style="--accent: #4dffc3">
+                <div class="panel__art" aria-hidden="true">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                    <g fill="none" stroke="currentColor" stroke-width="1.2" class="art-helix">
+                      <path d="M140 0 C260 60 260 140 140 200 C20 260 20 340 140 400 C260 460 260 540 140 600" />
+                      <path d="M260 0 C140 60 140 140 260 200 C380 260 380 340 260 400 C140 460 140 540 260 600" />
+                      <path d="M150 40 L250 40 M162 80 L238 80 M200 100 L200 100 M162 120 L238 120 M150 160 L250 160 M150 240 L250 240 M162 280 L238 280 M162 320 L238 320 M150 360 L250 360 M150 440 L250 440 M162 480 L238 480 M162 520 L238 520 M150 560 L250 560" opacity=".6" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="panel__meta mono">
+                  <span>W.03</span>
+                  <span class="panel__q">Can science change the future of human health?</span>
+                </div>
+                <div class="panel__side">
+                  <span class="panel__side-num mono">W.03</span>
+                  <span class="panel__side-title">Biotechnology</span>
+                </div>
+                <div class="panel__body">
+                  <span class="panel__icon"><i class="bi bi-activity"></i></span>
+                  <h3 class="panel__title">Bio-<br />technology</h3>
+                  <p class="panel__text">Can science change the future of human health?</p>
+                </div>
+              </article>
+
+              <!-- W.04 ENERGY -->
+              <article class="panel" data-world="energy" style="--accent: #ffd166">
+                <div class="panel__art" aria-hidden="true">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                    <g fill="none" stroke="currentColor" stroke-width="1.2" class="art-wave">
+                      <path d="M0 300 L60 300 L80 250 L110 350 L140 230 L170 370 L200 300 L400 300" />
+                      <path d="M0 380 L90 380 L110 350 L130 410 L160 330 L190 430 L220 380 L400 380" opacity=".5" />
+                      <path d="M0 220 L40 220 L70 190 L100 250 L130 170 L160 260 L190 220 L400 220" opacity=".35" />
+                    </g>
+                    <g fill="none" stroke="currentColor" stroke-width="1" opacity=".3">
+                      <circle cx="200" cy="300" r="140" stroke-dasharray="4 10" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="panel__meta mono">
+                  <span>W.04</span>
+                  <span class="panel__q">How will we power tomorrow's world?</span>
+                </div>
+                <div class="panel__side">
+                  <span class="panel__side-num mono">W.04</span>
+                  <span class="panel__side-title">Energy</span>
+                </div>
+                <div class="panel__body">
+                  <span class="panel__icon"><i class="bi bi-lightning-charge"></i></span>
+                  <h3 class="panel__title">Energy</h3>
+                  <p class="panel__text">How will we power tomorrow's world?</p>
+                </div>
+              </article>
+
+              <!-- W.05 CLIMATE -->
+              <article class="panel" data-world="climate" style="--accent: #7dff8a">
+                <div class="panel__art" aria-hidden="true">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                    <g fill="none" stroke="currentColor" stroke-width="1" class="art-contours">
+                      <path d="M200 300 m-30 0 a30 24 0 1 0 60 0 a30 24 0 1 0 -60 0" />
+                      <path d="M200 300 m-70 0 a70 56 0 1 0 140 0 a70 56 0 1 0 -140 0" />
+                      <path d="M200 300 m-110 0 a110 90 0 1 0 220 0 a110 90 0 1 0 -220 0" />
+                      <path d="M200 300 m-150 0 a150 126 0 1 0 300 0 a150 126 0 1 0 -300 0" />
+                      <path d="M200 300 m-190 0 a190 164 0 1 0 380 0 a190 164 0 1 0 -380 0" />
+                      <path d="M200 300 m-230 0 a230 204 0 1 0 460 0 a230 204 0 1 0 -460 0" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="panel__meta mono">
+                  <span>W.05</span>
+                  <span class="panel__q">Can technology help us build a sustainable planet?</span>
+                </div>
+                <div class="panel__side">
+                  <span class="panel__side-num mono">W.05</span>
+                  <span class="panel__side-title">Climate</span>
+                </div>
+                <div class="panel__body">
+                  <span class="panel__icon"><i class="bi bi-tree"></i></span>
+                  <h3 class="panel__title">Climate</h3>
+                  <p class="panel__text">Can technology help us build a sustainable planet?</p>
+                </div>
+              </article>
+
+              <!-- W.06 CITIES -->
+              <article class="panel" data-world="cities" style="--accent: #ff6ad5">
+                <div class="panel__art" aria-hidden="true">
+                  <svg viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+                    <g fill="none" stroke="currentColor" stroke-width="1" class="art-city">
+                      <rect x="30" y="360" width="50" height="240" />
+                      <rect x="95" y="280" width="60" height="320" />
+                      <rect x="170" y="200" width="45" height="400" />
+                      <rect x="230" y="320" width="70" height="280" />
+                      <rect x="315" y="250" width="55" height="350" />
+                      <path d="M192 200 L192 140 M192 140 L200 120 L184 120 Z" />
+                    </g>
+                    <g fill="currentColor" class="art-windows">
+                      <rect x="105" y="300" width="6" height="6" /><rect x="125" y="300" width="6" height="6" />
+                      <rect x="105" y="340" width="6" height="6" /><rect x="180" y="230" width="6" height="6" />
+                      <rect x="196" y="270" width="6" height="6" /><rect x="180" y="310" width="6" height="6" />
+                      <rect x="245" y="350" width="6" height="6" /><rect x="275" y="390" width="6" height="6" />
+                      <rect x="330" y="280" width="6" height="6" /><rect x="350" y="330" width="6" height="6" />
+                      <rect x="45" y="390" width="6" height="6" /><rect x="60" y="430" width="6" height="6" />
+                    </g>
+                  </svg>
+                </div>
+                <div class="panel__meta mono">
+                  <span>W.06</span>
+                  <span class="panel__q">What will the cities of the future look like?</span>
+                </div>
+                <div class="panel__side">
+                  <span class="panel__side-num mono">W.06</span>
+                  <span class="panel__side-title">Smart Cities</span>
+                </div>
+                <div class="panel__body">
+                  <span class="panel__icon"><i class="bi bi-buildings"></i></span>
+                  <h3 class="panel__title">Smart<br />Cities</h3>
+                  <p class="panel__text">What will the cities of the future look like?</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 03 · FUTURE LAB ───────────────────────────────────────── -->
+        <section class="lab" id="lab">
+          <div class="container">
+            <div class="lab__head">
+              <div>
+                <p class="label mono" data-reveal="fade">
+                  <span class="label__num">03</span>
+                  <span class="label__line"></span>
+                  <span>The competitions</span>
+                </p>
+                <h2 class="section-title section-title--xl" data-split>
+                  <span class="line">Welcome to</span>
+                  <span class="line"><span class="grad">the Future Lab</span></span>
+                </h2>
+              </div>
+              <p class="lab__intro" data-reveal>
+                Ideas become inventions when curiosity meets creativity. This is where the
+                theme turns into something you can build, test and compete in.
+              </p>
+            </div>
+
+            <ol class="lab__list" id="labList">
+              <li class="lab__row" data-reveal style="--accent: #5ef2ff" data-preview="Design. Build. Automate the future.">
+                <a href="#register" class="lab__link" data-cursor="hover">
+                  <span class="lab__num mono">01</span>
+                  <span class="lab__icon"><i class="bi bi-robot"></i></span>
+                  <span class="lab__name">Robotics</span>
+                  <span class="lab__desc">Design, build and battle-test machines built for real problems.</span>
+                  <span class="lab__cta mono">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+              </li>
+              <li class="lab__row" data-reveal style="--accent: #9d7bff; --reveal-delay: 60ms" data-preview="Intelligent ideas. Smarter tomorrow.">
+                <a href="#register" class="lab__link" data-cursor="hover">
+                  <span class="lab__num mono">02</span>
+                  <span class="lab__icon"><i class="bi bi-cpu"></i></span>
+                  <span class="lab__name">AI</span>
+                  <span class="lab__desc">Train models, solve puzzles, and push machine intelligence further.</span>
+                  <span class="lab__cta mono">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+              </li>
+              <li class="lab__row" data-reveal style="--accent: #4dffc3; --reveal-delay: 120ms" data-preview="Experiment. Discover. Unlock the unknown.">
+                <a href="#register" class="lab__link" data-cursor="hover">
+                  <span class="lab__num mono">03</span>
+                  <span class="lab__icon"><i class="bi bi-flask"></i></span>
+                  <span class="lab__name">Science</span>
+                  <span class="lab__desc">Experiment, discover, and prove your hypothesis on the day.</span>
+                  <span class="lab__cta mono">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+              </li>
+              <li class="lab__row" data-reveal style="--accent: #ffd166; --reveal-delay: 180ms" data-preview="Innovate. Engineer. Create impact.">
+                <a href="#register" class="lab__link" data-cursor="hover">
+                  <span class="lab__num mono">04</span>
+                  <span class="lab__icon"><i class="bi bi-motherboard"></i></span>
+                  <span class="lab__name">Tech Innovation</span>
+                  <span class="lab__desc">Prototype the product, app or gadget the world doesn't know it needs yet.</span>
+                  <span class="lab__cta mono">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+              </li>
+              <li class="lab__row" data-reveal style="--accent: #7dff8a; --reveal-delay: 240ms" data-preview="Solutions today for a better tomorrow.">
+                <a href="#register" class="lab__link" data-cursor="hover">
+                  <span class="lab__num mono">05</span>
+                  <span class="lab__icon"><i class="bi bi-leaf"></i></span>
+                  <span class="lab__name">Sustainability</span>
+                  <span class="lab__desc">Solve for the planet — energy, water, waste and the way we live.</span>
+                  <span class="lab__cta mono">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+              </li>
+              <li class="lab__row" data-reveal style="--accent: #ff6ad5; --reveal-delay: 300ms" data-preview="Imagine. Create. Inspire the world.">
+                <a href="#register" class="lab__link" data-cursor="hover">
+                  <span class="lab__num mono">06</span>
+                  <span class="lab__icon"><i class="bi bi-palette"></i></span>
+                  <span class="lab__name">Design &amp; Media</span>
+                  <span class="lab__desc">Tell the story of the future — film, design, games and visual worlds.</span>
+                  <span class="lab__cta mono">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+              </li>
+            </ol>
+
+            <div class="lab__preview" id="labPreview" aria-hidden="true">
+              <span class="lab__preview-icon"><i class="bi bi-robot"></i></span>
+              <span class="lab__preview-text">Design. Build. Automate the future.</span>
+            </div>
+
+            <div class="callout" data-reveal>
+              <div class="callout__orbit" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="callout__text">
+                <p class="mono">Six disciplines. One mission.</p>
+                <p class="callout__title">Build <span class="grad">the future.</span></p>
+              </div>
+              <a href="#register" class="btn btn--primary" data-cursor="hover">
+                <span>Join the Lab</span><i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 04 · MISSION CONTROL ──────────────────────────────────── -->
+        <section class="mission" id="mission">
+          <div class="container">
+            <div class="section-head section-head--center">
+              <p class="label mono label--center" data-reveal="fade">
+                <span class="label__num">04</span>
+                <span class="label__line"></span>
+                <span>Mission control</span>
+              </p>
+              <h2 class="section-title" data-reveal>
+                Ordinary information, <span class="grad">futuristic identity.</span>
+              </h2>
+            </div>
+
+            <div class="console" data-reveal="zoom">
+              <div class="console__bar">
+                <div class="console__status">
+                  <span class="pulse"></span>
+                  <span class="mono">Mission status</span>
+                  <span class="console__status-value mono">STAI 2026 · Active</span>
+                </div>
+                <div class="console__time mono">
+                  <span>LOCAL</span><span id="consoleClock">00:00:00</span>
+                </div>
+              </div>
+
+              <div class="console__grid">
+                <div class="console__radar" aria-hidden="true">
+                  <div class="radar">
+                    <div class="radar__ring"></div>
+                    <div class="radar__ring"></div>
+                    <div class="radar__ring"></div>
+                    <div class="radar__cross"></div>
+                    <div class="radar__sweep"></div>
+                    <span class="radar__blip" style="--x: 62%; --y: 34%; --d: 0s"></span>
+                    <span class="radar__blip" style="--x: 30%; --y: 58%; --d: 1.3s"></span>
+                    <span class="radar__blip" style="--x: 70%; --y: 70%; --d: 2.6s"></span>
+                    <span class="radar__blip" style="--x: 44%; --y: 26%; --d: 3.4s"></span>
+                  </div>
+                  <p class="mono console__radar-label">Tracking · 6 worlds · 12 events</p>
+                </div>
+
+                <dl class="readouts">
+                  <div class="readout">
+                    <dt class="mono"><i class="bi bi-calendar4-event"></i>Date</dt>
+                    <dd><span class="readout__big">15</span><span class="readout__unit">October 2026</span></dd>
+                  </div>
+                  <div class="readout">
+                    <dt class="mono"><i class="bi bi-geo-alt"></i>Location</dt>
+                    <dd><span class="readout__big readout__big--text">ISWK</span><span class="readout__unit">Main campus</span></dd>
+                  </div>
+                  <div class="readout">
+                    <dt class="mono"><i class="bi bi-mortarboard"></i>Participating schools</dt>
+                    <dd><span class="readout__big" data-count="25" data-suffix="+">0</span><span class="readout__unit">Across the region</span></dd>
+                  </div>
+                  <div class="readout">
+                    <dt class="mono"><i class="bi bi-flask"></i>Events</dt>
+                    <dd><span class="readout__big" data-count="12">0</span><span class="readout__unit">One day</span></dd>
+                  </div>
+                  <div class="readout">
+                    <dt class="mono"><i class="bi bi-people"></i>Participants</dt>
+                    <dd><span class="readout__big" data-count="500" data-suffix="+">0</span><span class="readout__unit">Future builders</span></dd>
+                  </div>
+                  <div class="readout readout--cta">
+                    <dt class="mono">Mission entry</dt>
+                    <dd>
+                      <a href="#register" class="btn btn--primary btn--sm" data-cursor="hover">
+                        <span>Register your team</span><i class="bi bi-arrow-right"></i>
+                      </a>
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 05 · FUTURE MAKERS ────────────────────────────────────── -->
+        <section class="makers" id="makers">
+          <div class="container">
+            <div class="makers__head">
+              <div>
+                <p class="label mono" data-reveal="fade">
+                  <span class="label__num">05</span>
+                  <span class="label__line"></span>
+                  <span>Future makers</span>
+                </p>
+                <h2 class="section-title" data-reveal>
+                  The <span class="grad">Future Makers</span>
+                </h2>
+                <p class="section-body" data-reveal style="--reveal-delay: 100ms">
+                  Meet the young minds designing tomorrow.
+                </p>
+              </div>
+              <div class="makers__nav" data-reveal="fade">
+                <button class="circ-btn makers__prev" type="button" aria-label="Previous" data-cursor="hover"><i class="bi bi-arrow-left"></i></button>
+                <span class="makers__count mono"><b id="makersIndex">01</b> / <span id="makersTotal">05</span></span>
+                <button class="circ-btn makers__next" type="button" aria-label="Next" data-cursor="hover"><i class="bi bi-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="makers__slider swiper" id="makersSwiper" data-reveal>
+            <div class="swiper-wrapper">
+              <article class="swiper-slide maker" style="--accent: #ffd166">
+                <div class="maker__visual" aria-hidden="true">
+                  <span class="maker__glyph"><i class="bi bi-sun"></i></span>
+                  <span class="maker__index mono">001</span>
+                </div>
+                <div class="maker__body">
+                  <p class="mono maker__label">Innovator 001</p>
+                  <h3 class="maker__name">Team Nova</h3>
+                  <p class="maker__school">XYZ School</p>
+                  <p class="maker__mission"><span class="mono">Mission</span> Solar-powered future</p>
+                  <a href="#register" class="text-link" data-cursor="hover">Explore <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </article>
+              <article class="swiper-slide maker" style="--accent: #4dffc3">
+                <div class="maker__visual" aria-hidden="true">
+                  <span class="maker__glyph"><i class="bi bi-activity"></i></span>
+                  <span class="maker__index mono">002</span>
+                </div>
+                <div class="maker__body">
+                  <p class="mono maker__label">Innovator 002</p>
+                  <h3 class="maker__name">Team Helix</h3>
+                  <p class="maker__school">ABC School</p>
+                  <p class="maker__mission"><span class="mono">Mission</span> Low-cost water diagnostics</p>
+                  <a href="#register" class="text-link" data-cursor="hover">Explore <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </article>
+              <article class="swiper-slide maker" style="--accent: #9d7bff">
+                <div class="maker__visual" aria-hidden="true">
+                  <span class="maker__glyph"><i class="bi bi-rocket-takeoff"></i></span>
+                  <span class="maker__index mono">003</span>
+                </div>
+                <div class="maker__body">
+                  <p class="mono maker__label">Innovator 003</p>
+                  <h3 class="maker__name">Team Orbit</h3>
+                  <p class="maker__school">LMN School</p>
+                  <p class="maker__mission"><span class="mono">Mission</span> CubeSat for classrooms</p>
+                  <a href="#register" class="text-link" data-cursor="hover">Explore <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </article>
+              <article class="swiper-slide maker" style="--accent: #5ef2ff">
+                <div class="maker__visual" aria-hidden="true">
+                  <span class="maker__glyph"><i class="bi bi-robot"></i></span>
+                  <span class="maker__index mono">004</span>
+                </div>
+                <div class="maker__body">
+                  <p class="mono maker__label">Innovator 004</p>
+                  <h3 class="maker__name">Team Flux</h3>
+                  <p class="maker__school">PQR School</p>
+                  <p class="maker__mission"><span class="mono">Mission</span> Rescue robotics</p>
+                  <a href="#register" class="text-link" data-cursor="hover">Explore <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </article>
+              <article class="swiper-slide maker" style="--accent: #7dff8a">
+                <div class="maker__visual" aria-hidden="true">
+                  <span class="maker__glyph"><i class="bi bi-tree"></i></span>
+                  <span class="maker__index mono">005</span>
+                </div>
+                <div class="maker__body">
+                  <p class="mono maker__label">Innovator 005</p>
+                  <h3 class="maker__name">Team Terra</h3>
+                  <p class="maker__school">UVW School</p>
+                  <p class="maker__mission"><span class="mono">Mission</span> Vertical farms for cities</p>
+                  <a href="#register" class="text-link" data-cursor="hover">Explore <i class="bi bi-arrow-right"></i></a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 06 · BUILD THE FUTURE (VOTE) ──────────────────────────── -->
+        <section class="vote" id="vote">
+          <div class="container">
+            <div class="section-head section-head--center">
+              <p class="label mono label--center" data-reveal="fade">
+                <span class="label__num">06</span>
+                <span class="label__line"></span>
+                <span>Your vote</span>
+              </p>
+              <h2 class="section-title" data-split>
+                <span class="line">If you could build the future,</span>
+                <span class="line"><span class="grad">what would you change?</span></span>
+              </h2>
+            </div>
+
+            <div class="orbit-poll" id="poll" data-reveal="zoom">
+              <div class="orbit-poll__rings" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+
+              <div class="orbit-poll__core" id="pollCore">
+                <svg class="orbit-poll__ring" viewBox="0 0 120 120" aria-hidden="true">
+                  <circle cx="60" cy="60" r="54" class="ring-track" />
+                  <circle cx="60" cy="60" r="54" class="ring-fill" id="pollRing" />
+                </svg>
+                <div class="orbit-poll__readout">
+                  <p class="mono orbit-poll__eyebrow" id="pollEyebrow">Select a world</p>
+                  <p class="orbit-poll__choice" id="pollChoice">—</p>
+                  <p class="orbit-poll__pct" id="pollPct"><b>0</b>%</p>
+                  <p class="orbit-poll__note" id="pollNote">of Future Builders agree with you.</p>
+                </div>
+              </div>
+
+              <div class="orbit-poll__options" id="pollOptions">
+                <button class="opt" type="button" style="--i: 0; --accent: #5ef2ff" data-label="AI" data-pct="32" data-cursor="hover">
+                  <i class="bi bi-cpu"></i><span>AI</span>
+                </button>
+                <button class="opt" type="button" style="--i: 1; --accent: #7dff8a" data-label="Climate" data-pct="24" data-cursor="hover">
+                  <i class="bi bi-tree"></i><span>Climate</span>
+                </button>
+                <button class="opt" type="button" style="--i: 2; --accent: #9d7bff" data-label="Space" data-pct="14" data-cursor="hover">
+                  <i class="bi bi-rocket-takeoff"></i><span>Space</span>
+                </button>
+                <button class="opt" type="button" style="--i: 3; --accent: #ff6ad5" data-label="Healthcare" data-pct="12" data-cursor="hover">
+                  <i class="bi bi-heart-pulse"></i><span>Healthcare</span>
+                </button>
+                <button class="opt" type="button" style="--i: 4; --accent: #ffd166" data-label="Energy" data-pct="10" data-cursor="hover">
+                  <i class="bi bi-lightning-charge"></i><span>Energy</span>
+                </button>
+                <button class="opt" type="button" style="--i: 5; --accent: #4dffc3" data-label="Cities" data-pct="8" data-cursor="hover">
+                  <i class="bi bi-buildings"></i><span>Cities</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="signal" id="signal" data-reveal>
+              <div class="signal__head">
+                <p class="mono"><span class="pulse pulse--small"></span>Live signal · what Future Builders are choosing</p>
+                <p class="mono signal__hint">During the fest this becomes a live visualisation.</p>
+              </div>
+              <ul class="signal__bars">
+                <li style="--accent: #5ef2ff; --pct: 32"><span class="mono">AI</span><span class="signal__bar"><i></i></span><b class="mono">32%</b></li>
+                <li style="--accent: #7dff8a; --pct: 24"><span class="mono">Climate</span><span class="signal__bar"><i></i></span><b class="mono">24%</b></li>
+                <li style="--accent: #9d7bff; --pct: 14"><span class="mono">Space</span><span class="signal__bar"><i></i></span><b class="mono">14%</b></li>
+                <li style="--accent: #ff6ad5; --pct: 12"><span class="mono">Healthcare</span><span class="signal__bar"><i></i></span><b class="mono">12%</b></li>
+                <li style="--accent: #ffd166; --pct: 10"><span class="mono">Energy</span><span class="signal__bar"><i></i></span><b class="mono">10%</b></li>
+                <li style="--accent: #4dffc3; --pct: 8"><span class="mono">Cities</span><span class="signal__bar"><i></i></span><b class="mono">8%</b></li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 07 · COUNTDOWN ────────────────────────────────────────── -->
+        <section class="countdown" id="countdown">
+          <div class="countdown__glow" aria-hidden="true"></div>
+          <div class="container">
+            <div class="section-head section-head--center">
+              <p class="label mono label--center" data-reveal="fade">
+                <span class="label__num">07</span>
+                <span class="label__line"></span>
+                <span>T-minus</span>
+              </p>
+              <h2 class="section-title" data-reveal>Countdown <span class="grad">to the Future</span></h2>
+            </div>
+
+            <div class="clock" id="clock" data-reveal="zoom">
+              <div class="clock__unit">
+                <span class="clock__num" id="cdDays" data-unit="days"><span>00</span></span>
+                <span class="clock__label mono">Days</span>
+              </div>
+              <span class="clock__sep" aria-hidden="true">:</span>
+              <div class="clock__unit">
+                <span class="clock__num" id="cdHours" data-unit="hours"><span>00</span></span>
+                <span class="clock__label mono">Hours</span>
+              </div>
+              <span class="clock__sep" aria-hidden="true">:</span>
+              <div class="clock__unit">
+                <span class="clock__num" id="cdMin" data-unit="minutes"><span>00</span></span>
+                <span class="clock__label mono">Minutes</span>
+              </div>
+              <span class="clock__sep" aria-hidden="true">:</span>
+              <div class="clock__unit">
+                <span class="clock__num" id="cdSec" data-unit="seconds"><span>00</span></span>
+                <span class="clock__label mono">Seconds</span>
+              </div>
+            </div>
+
+            <p class="countdown__note" id="cdNote" data-reveal>The future is getting closer.</p>
+            <p class="countdown__meta mono" data-reveal="fade">15 October 2026 · 09:00 · ISWK</p>
+          </div>
+        </section>
+
+        <!-- ─── 08 · ON THE DAY / LIVE ────────────────────────────────── -->
+        <section class="live" id="live">
+          <div class="container">
+            <div class="section-head">
+              <p class="label mono" data-reveal="fade">
+                <span class="label__num">08</span>
+                <span class="label__line"></span>
+                <span>On the day</span>
+              </p>
+              <h2 class="section-title" data-reveal id="liveTitle">
+                Prepare <span class="grad">for the future.</span>
+              </h2>
+              <p class="section-body" data-reveal style="--reveal-delay: 100ms" id="liveBody">
+                Before STAI, this space holds the schedule. The moment the festival opens, it
+                becomes a live dashboard — announcements, results and the leaderboard, updated
+                in real time.
+              </p>
+            </div>
+
+            <div class="dash" id="dash" data-reveal="zoom">
+              <div class="dash__bar">
+                <span class="dash__tag mono" id="liveTag"><span class="pulse pulse--small"></span><span id="liveTagText">STAI 2026 — Scheduled</span></span>
+                <span class="dash__tag mono dash__tag--muted">Future Lab dashboard</span>
+                <button class="dash__toggle mono" id="liveToggle" type="button" data-cursor="hover">Preview live mode</button>
+              </div>
+
+              <div class="dash__grid">
+                <div class="dash__cell dash__cell--now">
+                  <p class="dash__lbl mono" id="nowLabel">First up</p>
+                  <p class="dash__main"><i class="bi bi-robot"></i>Robotics Challenge</p>
+                  <p class="dash__sub">10:30 AM — Auditorium</p>
+                  <div class="dash__wave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                </div>
+                <div class="dash__cell">
+                  <p class="dash__lbl mono">Up next</p>
+                  <p class="dash__main"><i class="bi bi-activity"></i>Bio Innovation</p>
+                  <p class="dash__sub">12:00 PM — Lab 2</p>
+                </div>
+                <div class="dash__cell">
+                  <p class="dash__lbl mono">Featured category</p>
+                  <p class="dash__main"><i class="bi bi-flask"></i>Science Fair</p>
+                  <p class="dash__sub">All day — Main Hall</p>
+                </div>
+                <div class="dash__cell dash__cell--result">
+                  <p class="dash__lbl mono">Latest result</p>
+                  <p class="dash__main" id="resultMain"><i class="bi bi-trophy"></i><span>Opens on event day</span></p>
+                  <p class="dash__sub" id="resultSub">Live results, team by team</p>
+                </div>
+                <div class="dash__cell dash__cell--board">
+                  <p class="dash__lbl mono">Leaderboard <span class="dash__live-chip mono">live</span></p>
+                  <ol class="board" id="board">
+                    <li style="--v: 100"><span class="mono">1</span><span>Team Nova</span><span class="board__bar"><i></i></span><b class="mono">260</b></li>
+                    <li style="--v: 72"><span class="mono">2</span><span>Team Helix</span><span class="board__bar"><i></i></span><b class="mono">188</b></li>
+                    <li style="--v: 58"><span class="mono">3</span><span>Team Orbit</span><span class="board__bar"><i></i></span><b class="mono">150</b></li>
+                    <li style="--v: 41"><span class="mono">4</span><span>Team Flux</span><span class="board__bar"><i></i></span><b class="mono">106</b></li>
+                    <li style="--v: 30"><span class="mono">5</span><span>Team Terra</span><span class="board__bar"><i></i></span><b class="mono">78</b></li>
+                  </ol>
+                  <p class="board__note mono" id="boardNote">Scores unlock when the festival opens.</p>
+                </div>
+              </div>
+
+              <div class="dash__ticker" aria-hidden="true">
+                <div class="dash__ticker-track" id="tickerTrack">
+                  <span>Live announcements</span><span>Event schedule</span><span>Results</span><span>Leaderboard</span><span>Photos</span><span>Videos</span><span>Winning projects</span>
+                  <span>Live announcements</span><span>Event schedule</span><span>Results</span><span>Leaderboard</span><span>Photos</span><span>Videos</span><span>Winning projects</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ─── 09 · OUTRO ────────────────────────────────────────────── -->
+        <section class="outro" id="register">
+          <div class="outro__field" aria-hidden="true">
+            <canvas id="outroCanvas"></canvas>
+          </div>
+          <div class="container">
+            <h2 class="outro__title" data-split>
+              <span class="line">The future</span>
+              <span class="line"><span class="grad">starts here.</span></span>
+            </h2>
+            <ul class="outro__lines">
+              <li data-reveal>It starts with a question.</li>
+              <li data-reveal style="--reveal-delay: 160ms">It grows through curiosity.</li>
+              <li data-reveal style="--reveal-delay: 320ms">It becomes real through innovation.</li>
+            </ul>
+
+            <div class="outro__cta" data-reveal style="--reveal-delay: 400ms">
+              <a href="mailto:hello@yourschool.edu?subject=STAI%202026%20Registration" class="btn btn--primary btn--lg" data-cursor="hover">
+                <span>Register for STAI 2026</span><i class="bi bi-arrow-right"></i>
+              </a>
+              <a href="#top" class="btn btn--ghost btn--lg" data-cursor="hover">
+                <span>Back to the top</span><i class="bi bi-arrow-up"></i>
+              </a>
+            </div>
+
+            <div class="outro__mark" data-reveal="fade" style="--reveal-delay: 500ms">
+              <div class="outro__mark-ring" aria-hidden="true"><span></span><span></span></div>
+              <p class="outro__mark-name">STAI 2026</p>
+              <p class="outro__mark-line mono">Science • Technology • Innovation</p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer__inner">
+          <p class="footer__copy mono">© 2026 School Name — STAI Future World</p>
+          <nav class="footer__nav" aria-label="Footer">
+            <a href="#worlds">Worlds</a>
+            <a href="#lab">Future Lab</a>
+            <a href="#mission">Mission</a>
+            <a href="#live">Live</a>
+          </nav>
+          <div class="footer__social">
+            <a href="#" aria-label="X" data-cursor="hover"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" aria-label="Facebook" data-cursor="hover"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="LinkedIn" data-cursor="hover"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="Instagram" data-cursor="hover"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="YouTube" data-cursor="hover"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+      </footer>
+
+      <button class="return-top" id="returnTop" type="button" aria-label="Back to top">
+        <i class="bi bi-arrow-up"></i>
+      </button>
+    </div>
+
+    <script src="assets/js/bootstrap.bundle.min.js" defer></script>
+    <script src="assets/js/lenis.min.js" defer></script>
+    <script src="assets/js/swiper-bundle.min.js" defer></script>
+    <!-- main.js last: it reads window.Lenis and window.Swiper at init. -->
+    <script src="assets/js/main.js" defer></script>
+  </body>
+</html>

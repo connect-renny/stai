@@ -1,0 +1,120 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  07 · COUNTDOWN
+// ═══════════════════════════════════════════════════════════════════════════
+
+.countdown {
+  text-align: center;
+  overflow: hidden;
+
+  &__glow {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: min(900px, 120vw);
+    aspect-ratio: 2 / 1;
+    translate: -50% -50%;
+    background: radial-gradient(ellipse, rgb(var(--magenta-rgb) / 10%), rgb(var(--violet-rgb) / 8%) 40%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+  }
+
+  .section-head {
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+
+  &__note {
+    margin-top: clamp(28px, 4vw, 44px);
+    font-family: var(--display-font);
+    font-weight: var(--fw-semibold);
+    font-size: var(--fs-fluid-xl);
+    letter-spacing: -0.01em;
+    color: var(--color-heading);
+  }
+
+  &__meta {
+    margin-top: 12px;
+    color: var(--color-text-dim);
+  }
+}
+
+.clock {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: clamp(6px, 2vw, 20px);
+
+  &__unit {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    min-width: clamp(64px, 18vw, 180px);
+    padding: clamp(18px, 3vw, 32px) clamp(8px, 2vw, 24px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, rgb(255 255 255 / 4%), rgb(255 255 255 / 1%));
+    overflow: hidden;
+
+    // subtle scanline shimmer
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, rgb(var(--cyan-rgb) / 6%) 50%, transparent 100%);
+      background-size: 100% 200%;
+      animation: shimmer 6s linear infinite;
+      pointer-events: none;
+    }
+  }
+
+  &__num {
+    display: block;
+    height: 1em;
+    font-family: var(--display-font);
+    font-weight: var(--fw-black);
+    font-size: clamp(2.2rem, 8vw, 6.5rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: var(--color-heading);
+    font-variant-numeric: tabular-nums;
+    overflow: hidden;
+
+    span {
+      display: block;
+
+      &.is-rolling {
+        animation: rollIn 0.5s var(--ease-expo);
+      }
+    }
+  }
+
+  &__label {
+    color: var(--color-text-muted);
+  }
+
+  &__sep {
+    align-self: center;
+    font-family: var(--display-font);
+    font-weight: var(--fw-bold);
+    font-size: clamp(1.6rem, 5vw, 3.5rem);
+    color: var(--violet);
+    animation: blink 1s steps(2, start) infinite;
+    padding-bottom: 1.6em;
+
+    @include mq-down("sm") {
+      display: none;
+    }
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 0 200%;
+  }
+  to {
+    background-position: 0 -200%;
+  }
+}

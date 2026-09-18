@@ -1,0 +1,10 @@
+node_modules/
+
+# Compiled from scss/ with `npm run build`. style.css is committed so the site
+# works straight from a clone / GitHub Pages; only maps are ignored.
+assets/css/*.map
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

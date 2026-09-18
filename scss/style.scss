@@ -1,0 +1,52 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  STAI 2026 — Future World
+//
+//  Compile:  npm run dev     (watch + sourcemaps)
+//            npm run build   (compressed, autoprefixed → assets/css/style.css)
+//            sass scss/style.scss assets/css/style.css
+//
+//  Order matters — tokens must land before anything that reads them, and
+//  utilities go last so their !important actually wins.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// 1. Toolbox — emits no CSS
+@use "abstracts";
+
+// 2. Base
+@use "base/root";
+@use "base/fonts";
+@use "base/reset";
+@use "base/typography";
+@use "base/accessibility";
+
+// 3. Layout
+@use "layout/container";
+@use "layout/header";
+@use "layout/navigation";
+@use "layout/section";
+@use "layout/footer";
+
+// 4. Components
+@use "components/animations";
+@use "components/atmos";
+@use "components/buttons";
+@use "components/preloader";
+@use "components/gate";
+@use "components/swiper";
+@use "components/smooth-scroll";
+@use "components/back-to-top";
+
+// 5. Pages — one partial per screen, in scroll order
+@use "pages/theme";
+@use "pages/worlds";
+@use "pages/lab";
+@use "pages/mission";
+@use "pages/makers";
+@use "pages/vote";
+@use "pages/countdown";
+@use "pages/live";
+@use "pages/outro";
+
+// 6. Utilities — last, so they can override anything above
+@use "utilities/spacing";
+@use "utilities/helpers";

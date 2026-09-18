@@ -1,0 +1,6 @@
+// Single entry point for the toolbox. Every partial starts with:
+//   @use "../abstracts" as *;
+// These files emit no CSS, so importing them everywhere costs nothing.
+@forward "variables";
+@forward "functions";
+@forward "mixins";

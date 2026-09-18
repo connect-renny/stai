@@ -1,0 +1,548 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  THE GATE — opening screen + boot sequence
+//
+//  Lifecycle (driven by main.js):
+//    .gate.is-held         → behind the preloader: title reveal pinned, video
+//                            paused (App.preloader releases both as it lifts)
+//    .gate                 → idle, content visible
+//    .gate.is-booting      → content fades, .boot plays
+//    .gate.is-opening      → iris closes to reveal the site beneath
+//    .gate.is-done         → removed from layout
+// ═══════════════════════════════════════════════════════════════════════════
+
+body.is-gated {
+  overflow: hidden;
+  height: 100svh;
+}
+
+.gate {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-gate);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgb(var(--violet-rgb) / 12%), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgb(var(--cyan-rgb) / 5%), transparent 70%),
+    #04060e;
+  clip-path: circle(150% at 50% 60%);
+  transition: clip-path 1.5s var(--ease-in-out);
+
+  // The whole screen collapses into the horizon
+  &.is-opening {
+    clip-path: circle(0% at 50% 60%);
+  }
+
+  &.is-done {
+    display: none;
+  }
+
+  // Preloader lifted: the title resolves out of its blur, line by line
+  // (delays live on .blur-line / .blur-after in components/_animations).
+  &:not(.is-held) {
+    .blur-line,
+    .blur-after {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateY(0);
+    }
+  }
+
+  // Full-bleed video backdrop, sitting under the nebula and HUD.
+  // Hidden while held, so the first frame fades in as playback starts.
+  &__video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+    transition: opacity 1.2s ease 0.2s;
+
+    .is-held & {
+      opacity: 0;
+    }
+  }
+
+  // Darkens the footage so the title and HUD stay legible
+  &__veil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 55%, rgb(4 6 14 / 25%), rgb(4 6 14 / 70%) 100%),
+      linear-gradient(180deg, rgb(4 6 14 / 55%) 0%, rgb(4 6 14 / 15%) 35%, rgb(4 6 14 / 25%) 70%, #04060e 100%);
+  }
+
+  &__nebula {
+    position: absolute;
+    inset: -20%;
+    background:
+      radial-gradient(40% 40% at 18% 28%, rgb(var(--violet-rgb) / 10%), transparent 70%),
+      radial-gradient(35% 35% at 82% 22%, rgb(var(--cyan-rgb) / 7%), transparent 70%),
+      radial-gradient(30% 30% at 65% 85%, rgb(var(--magenta-rgb) / 5%), transparent 70%);
+    filter: blur(40px);
+    animation: nebulaDrift 24s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+
+  // ─── HUD corners ─────────────────────────────────────────────────────────
+  &__hud {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text-dim);
+    font-size: var(--fs-2xs);
+    z-index: 2;
+
+    &--tl {
+      top: 28px;
+      left: 32px;
+    }
+
+    &--tr {
+      top: 28px;
+      right: 32px;
+    }
+
+    &--bl {
+      bottom: 28px;
+      left: 32px;
+    }
+
+    &--br {
+      bottom: 28px;
+      right: 32px;
+    }
+
+    @include mq-down("md") {
+      &--tl,
+      &--tr {
+        top: 18px;
+      }
+
+      &--bl,
+      &--br {
+        bottom: 18px;
+      }
+
+      &--tl,
+      &--bl {
+        left: 18px;
+      }
+
+      &--tr,
+      &--br {
+        right: 18px;
+      }
+    }
+  }
+
+  .hud-sep {
+    width: 18px;
+    height: 1px;
+    background: var(--color-text-dim);
+  }
+
+  .hud-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    animation: blink 1.6s steps(2, start) infinite;
+  }
+
+  &__frame {
+    position: absolute;
+    inset: 18px;
+    pointer-events: none;
+    z-index: 1;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border: 1px solid rgb(var(--cyan-rgb) / 40%);
+    }
+
+    &::before {
+      top: 0;
+      left: 0;
+      border-right: 0;
+      border-bottom: 0;
+    }
+
+    &::after {
+      right: 0;
+      bottom: 0;
+      border-left: 0;
+      border-top: 0;
+    }
+  }
+
+  // ─── Centre content ──────────────────────────────────────────────────────
+  &__content {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-inline: var(--container-gutter);
+    padding-bottom: 6vh; // content sits in the dark sphere, above the band
+    transition:
+      opacity 0.6s ease,
+      transform 0.8s var(--ease-expo);
+
+    .is-booting & {
+      opacity: 0;
+      transform: scale(0.96) translateY(-10px);
+      pointer-events: none;
+    }
+  }
+
+  &__kicker {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: clamp(20px, 3vw, 32px);
+    padding: 10px 18px;
+    border: 1px solid rgb(var(--cyan-rgb) / 18%);
+    border-radius: var(--radius-pill);
+    background: rgb(2 3 8 / 55%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: var(--color-text-muted);
+    letter-spacing: 0.3em;
+    font-size: var(--fs-2xs);
+
+    span:first-child {
+      color: var(--cyan);
+    }
+
+    i {
+      font-style: normal;
+      color: var(--violet);
+    }
+
+    &-sep {
+      color: var(--color-text-dim);
+    }
+  }
+
+  &__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 0 clamp(18px, 2.6vw, 30px);
+    font-family: var(--display-font);
+    font-weight: var(--fw-black);
+    font-size: min(var(--fs-fluid-8xl), 13.5vw, 8.5rem);
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+  }
+
+  &__word {
+    position: relative;
+    display: block;
+
+    &--solid {
+      color: var(--color-heading);
+      text-shadow:
+        0 0 60px rgb(var(--cyan-rgb) / 25%),
+        0 0 24px rgb(2 3 8 / 80%);
+    }
+
+    &--outline {
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgb(var(--cyan-rgb) / 85%);
+      text-shadow: none;
+
+      // A glowing fill that sweeps through the outline
+      &::after {
+        content: attr(data-text);
+        position: absolute;
+        inset: 0;
+        -webkit-text-stroke: 0;
+        background: var(--grad-text);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        clip-path: inset(0 100% 0 0);
+        animation: sweepFill 6s var(--ease-in-out) infinite;
+      }
+    }
+  }
+
+  &__tag {
+    max-width: 34ch;
+    text-shadow: 0 0 18px rgb(2 3 8 / 90%);
+    margin: 0 auto clamp(24px, 3.2vw, 36px);
+    font-size: var(--fs-fluid-lg);
+    font-weight: var(--fw-light);
+    line-height: 1.6;
+    color: var(--color-text-muted);
+
+    em {
+      font-style: normal;
+      color: var(--color-heading);
+    }
+  }
+
+  &__hint {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6.5vh;
+    margin: 0;
+    color: var(--color-text-dim);
+    font-size: var(--fs-2xs);
+    letter-spacing: 0.18em;
+
+    kbd {
+      margin-inline: 4px;
+      padding: 1px 6px;
+      font-size: 0.65rem;
+      border-color: rgb(var(--cyan-rgb) / 35%);
+    }
+  }
+}
+
+// ─── Enter button ──────────────────────────────────────────────────────────
+.enter {
+  position: relative;
+  display: inline-block;
+  padding: 2px;
+  border-radius: var(--radius-pill);
+  isolation: isolate;
+  transform: translate(var(--mx, 0px), var(--my, 0px));
+  transition: transform 0.3s var(--ease-out);
+
+  &__glow {
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: conic-gradient(
+      from var(--angle, 0deg),
+      transparent 0%,
+      var(--cyan) 20%,
+      var(--violet) 40%,
+      transparent 60%
+    );
+    animation: rotateAngle 4s linear infinite;
+    filter: blur(0.5px);
+    z-index: -1;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: inherit;
+      filter: blur(18px);
+      opacity: 0.6;
+      transition: opacity 0.4s ease;
+    }
+  }
+
+  &__body {
+    display: inline-flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 14px 20px 34px;
+    border-radius: inherit;
+    background: rgb(8 12 24 / 92%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: background-color 0.4s ease;
+  }
+
+  &__label {
+    font-family: var(--display-font);
+    font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-heading);
+  }
+
+  &__arrow {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--color-heading);
+    color: var(--color-bg);
+    font-size: 1.05rem;
+    overflow: hidden;
+
+    i {
+      transition: transform 0.5s var(--ease-expo);
+    }
+  }
+
+  @include hover {
+    .enter__glow::after {
+      opacity: 1;
+    }
+
+    .enter__body {
+      background: rgb(14 20 40 / 92%);
+    }
+
+    .enter__arrow i {
+      transform: translateX(3px);
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// ─── Boot sequence ─────────────────────────────────────────────────────────
+.boot {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.5s ease 0.3s,
+    visibility 0s linear 0.8s;
+  pointer-events: none;
+
+  .is-booting & {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0.3s, 0s;
+  }
+
+  &__inner {
+    width: min(720px, 100% - 2 * var(--container-gutter));
+    display: grid;
+    gap: 22px;
+  }
+
+  &__log {
+    min-height: 7.2em;
+    color: var(--color-text-muted);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.1em;
+    line-height: 1.8;
+    text-transform: none;
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      opacity: 0;
+      transform: translateY(6px);
+      animation: logIn 0.4s var(--ease-out) forwards;
+
+      b {
+        font-weight: var(--fw-medium);
+        color: var(--cyan);
+        flex: none;
+      }
+
+      &.is-warn b {
+        color: var(--color-warning);
+      }
+    }
+
+    .prompt {
+      color: var(--violet);
+      margin-right: 10px;
+    }
+  }
+
+  &__counter {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    font-family: var(--display-font);
+    font-weight: var(--fw-black);
+    font-size: clamp(5rem, 16vw, 11rem);
+    line-height: 0.9;
+    letter-spacing: -0.05em;
+    color: var(--color-heading);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__pct {
+    font-size: 0.3em;
+    color: var(--cyan);
+    letter-spacing: 0;
+  }
+
+  &__bar {
+    position: relative;
+    height: 6px;
+    background: rgb(255 255 255 / 6%);
+    overflow: hidden;
+
+    &-fill {
+      position: absolute;
+      inset: 0;
+      background: var(--grad-brand);
+      transform-origin: left;
+      transform: scaleX(var(--p, 0));
+      box-shadow: 0 0 20px rgb(var(--cyan-rgb) / 60%);
+    }
+
+    // Segment mask over the bar so it reads like ████████░
+    &-segments {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0 22px,
+        var(--color-bg) 22px 25px
+      );
+    }
+  }
+
+  &__status {
+    display: grid;
+    gap: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.6s var(--ease-out),
+      transform 0.6s var(--ease-out);
+
+    &.is-on {
+      opacity: 1;
+      transform: none;
+    }
+
+    &-line {
+      color: var(--cyan);
+    }
+
+    &-title {
+      font-family: var(--display-font);
+      font-weight: var(--fw-bold);
+      font-size: var(--fs-fluid-3xl);
+      letter-spacing: -0.02em;
+      color: var(--color-heading);
+    }
+  }
+}

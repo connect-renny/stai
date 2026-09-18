@@ -1,0 +1,196 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  05 · FUTURE MAKERS — innovator cards on a free-mode slider
+// ═══════════════════════════════════════════════════════════════════════════
+
+.makers {
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    margin-bottom: clamp(32px, 5vw, 56px);
+
+    .section-title {
+      margin-bottom: var(--space-sm);
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+  }
+
+  &__count {
+    color: var(--color-text-dim);
+    font-variant-numeric: tabular-nums;
+
+    b {
+      font-weight: var(--fw-medium);
+      color: var(--color-heading);
+    }
+  }
+
+  &__slider {
+    padding-inline: var(--container-gutter);
+    overflow: visible;
+
+    .swiper-slide {
+      width: min(400px, 82vw);
+      height: auto;
+    }
+  }
+}
+
+.maker {
+  --accent: var(--cyan);
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-2);
+  overflow: hidden;
+  transition:
+    border-color 0.4s ease,
+    transform 0.6s var(--ease-expo),
+    box-shadow 0.5s ease;
+
+  @include hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    transform: translateY(-6px);
+    box-shadow: 0 30px 60px rgb(0 0 0 / 40%), 0 0 40px color-mix(in srgb, var(--accent) 12%, transparent);
+
+    .maker__glyph {
+      transform: scale(1.08) rotate(-4deg);
+    }
+
+    .maker__visual::after {
+      opacity: 1;
+    }
+  }
+
+  &__visual {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(60% 80% at 50% 100%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 70%),
+      linear-gradient(180deg, var(--color-bg-3), var(--color-bg-2));
+    border-bottom: 1px solid var(--color-border);
+    overflow: hidden;
+
+    // dot grid texture
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(color-mix(in srgb, var(--accent) 35%, transparent) 1px, transparent 1px);
+      background-size: 22px 22px;
+      opacity: 0.35;
+      mask-image: radial-gradient(circle at 50% 60%, black, transparent 75%);
+      -webkit-mask-image: radial-gradient(circle at 50% 60%, black, transparent 75%);
+    }
+
+    // scan line on hover
+    &::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      animation: scanDown 2.4s linear infinite;
+      transition: opacity 0.3s ease;
+    }
+  }
+
+  &__glyph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 84px;
+    height: 84px;
+    border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+    border-radius: 24px;
+    color: var(--accent);
+    font-size: 2rem;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    box-shadow: 0 0 40px color-mix(in srgb, var(--accent) 30%, transparent);
+    transition: transform 0.6s var(--ease-expo);
+  }
+
+  &__index {
+    position: absolute;
+    right: 18px;
+    bottom: 12px;
+    font-family: var(--display-font);
+    font-weight: var(--fw-black);
+    font-size: 4rem;
+    line-height: 1;
+    letter-spacing: -0.05em;
+    color: color-mix(in srgb, var(--accent) 12%, transparent);
+    text-transform: none;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 24px 26px 26px;
+    flex: 1;
+  }
+
+  &__label {
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  &__name {
+    font-size: 1.6rem;
+    margin-bottom: 0;
+  }
+
+  &__school {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+  }
+
+  &__mission {
+    margin-top: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+    font-weight: var(--fw-medium);
+    color: var(--color-heading);
+
+    .mono {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--color-text-dim);
+    }
+  }
+
+  .text-link {
+    margin-top: auto;
+    padding-top: 18px;
+  }
+}
+
+@keyframes scanDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(260px);
+  }
+}

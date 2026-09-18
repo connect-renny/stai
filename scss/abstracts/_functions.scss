@@ -1,0 +1,51 @@
+@use "sass:map";
+@use "sass:math";
+@use "sass:list";
+@use "variables" as v;
+
+// ─── bp($name) ─────────────────────────────────────────────────────────────
+// Look a breakpoint up by name, with a clear error instead of a null value.
+@function bp($name) {
+  @if not map.has-key(v.$breakpoints, $name) {
+    @error "Unknown breakpoint `#{$name}`. Available: #{map.keys(v.$breakpoints)}.";
+  }
+  @return map.get(v.$breakpoints, $name);
+}
+
+// ─── strip-unit($value) ────────────────────────────────────────────────────
+@function strip-unit($value) {
+  @return math.div($value, ($value * 0 + 1));
+}
+
+// ─── rem($px) ──────────────────────────────────────────────────────────────
+// rem(24) → 1.5rem. Assumes a 16px root, which base/_root.scss guarantees.
+@function rem($px, $base: 16) {
+  @if math.is-unitless($px) == false {
+    $px: strip-unit($px);
+  }
+  @return math.div($px, $base) * 1rem;
+}
+
+// ─── fluid($min, $max, $from, $to) ─────────────────────────────────────────
+// Linear interpolation between two px sizes across two viewport widths, as a
+// single clamp(). fluid(32, 64) → font-size that grows 32px→64px from 576px
+// to 1600px, and stays pinned outside that range.
+@function fluid($min, $max, $from: v.$bp-sm, $to: v.$bp-xxxl) {
+  $min-px: strip-unit($min);
+  $max-px: strip-unit($max);
+  $from-px: strip-unit($from);
+  $to-px: strip-unit($to);
+
+  @if $from-px == $to-px {
+    @error "fluid(): `$from` and `$to` must differ.";
+  }
+
+  $slope: math.div($max-px - $min-px, $to-px - $from-px);
+  $intercept: $min-px - ($slope * $from-px);
+
+  @return clamp(
+    #{rem($min-px)},
+    #{rem($intercept)} + #{math.round($slope * 10000) * 0.01}vw,
+    #{rem($max-px)}
+  );
+}

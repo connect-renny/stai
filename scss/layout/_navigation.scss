@@ -1,0 +1,87 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Mobile drawer — full-screen overlay that irises open from the burger.
+// ═══════════════════════════════════════════════════════════════════════════
+
+.drawer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer);
+  display: grid;
+  place-items: center;
+  background: rgb(6 9 19 / 94%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  clip-path: circle(0% at calc(100% - 44px) 40px);
+  visibility: hidden;
+  transition:
+    clip-path 0.8s var(--ease-expo),
+    visibility 0s linear 0.8s;
+
+  &.is-open {
+    clip-path: circle(150% at calc(100% - 44px) 40px);
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  &__inner {
+    width: 100%;
+    max-width: 520px;
+    padding: var(--space-2xl) var(--container-gutter) var(--space-xl);
+  }
+
+  &__kicker {
+    margin-bottom: var(--space-lg);
+    color: var(--cyan);
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+
+    a {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--color-border);
+      font-family: var(--display-font);
+      font-size: clamp(1.5rem, 6vw, 2.1rem);
+      font-weight: var(--fw-bold);
+      letter-spacing: -0.01em;
+      color: var(--color-heading);
+      opacity: 0;
+      transform: translateY(16px);
+      transition:
+        opacity 0.5s var(--ease-out),
+        transform 0.5s var(--ease-out),
+        color 0.3s ease;
+
+      .mono {
+        color: var(--color-text-dim);
+        font-size: var(--fs-2xs);
+      }
+
+      @include hover {
+        color: var(--cyan);
+      }
+    }
+  }
+
+  &.is-open &__nav a {
+    opacity: 1;
+    transform: none;
+
+    @for $i from 1 through 8 {
+      &:nth-child(#{$i}) {
+        transition-delay: #{0.15 + $i * 0.05}s;
+      }
+    }
+  }
+
+  &__cta {
+    margin-top: var(--space-lg);
+    width: 100%;
+  }
+}

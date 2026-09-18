@@ -1,0 +1,28 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  Lenis smooth scroll — required stylesheet
+//  Ships with the library; inlined here so there is one less network request
+//  and one less file to forget when copying the kit.
+// ═══════════════════════════════════════════════════════════════════════════
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+// Opt an inner scroll container out of Lenis with `data-lenis-prevent`.
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+// Stops an iframe swallowing the wheel event mid-scroll.
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

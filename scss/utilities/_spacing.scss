@@ -1,0 +1,72 @@
+@use "sass:map";
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Pixel spacing + sizing utilities
+//
+//  Two things changed from V5:
+//
+//  1. Logical properties. `.ps-16px` was `padding-left`, which silently broke
+//     every RTL build. It is `padding-inline-start` now, so it flips with
+//     `dir="rtl"` for free.
+//  2. One map drives every property, so adding `gap-*` cost three lines
+//     instead of six copies of a 14-line block.
+//
+//  Class shape: {prop}{-breakpoint}-{value}px  →  .pt-24px  .pt-md-24px
+//  Breakpoints match Bootstrap exactly, so `.px-md-16px` and `.px-md-3`
+//  trigger at the same width.
+// ═══════════════════════════════════════════════════════════════════════════
+
+$spacing-props: (
+  "p": padding,
+  "px": padding-inline,
+  "py": padding-block,
+  "pt": padding-top,
+  "pb": padding-bottom,
+  "ps": padding-inline-start,
+  "pe": padding-inline-end,
+  "m": margin,
+  "mx": margin-inline,
+  "my": margin-block,
+  "mt": margin-top,
+  "mb": margin-bottom,
+  "ms": margin-inline-start,
+  "me": margin-inline-end,
+  "gap": gap,
+  "gap-x": column-gap,
+  "gap-y": row-gap,
+);
+
+@mixin spacing-set($infix: "") {
+  @each $abbr, $prop in $spacing-props {
+    @each $i in $spaces {
+      .#{$abbr}#{$infix}-#{$i}px {
+        #{$prop}: #{$i}px !important;
+      }
+    }
+  }
+
+  // Fixed sizing — width/height locked so flexbox can't stretch the element.
+  @each $i in $spaces {
+    .w#{$infix}-#{$i}px {
+      width: #{$i}px !important;
+      min-width: #{$i}px !important;
+      max-width: #{$i}px !important;
+    }
+    .h#{$infix}-#{$i}px {
+      height: #{$i}px !important;
+      min-height: #{$i}px !important;
+      max-height: #{$i}px !important;
+    }
+  }
+}
+
+// Base (all widths)
+@include spacing-set();
+
+// Responsive variants, mobile-first: `.pt-md-24px` applies at ≥768px and up.
+@each $name in $utility-breakpoints {
+  @include mq-up($name) {
+    @include spacing-set("-#{$name}");
+  }
+}

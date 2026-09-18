@@ -1,0 +1,45 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Accessibility primitives
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Keyboard users land here first and can jump past the nav. It's the single
+// cheapest a11y win on any site — don't delete it.
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: var(--z-toast);
+  padding: 12px 24px;
+  background: var(--color-brand);
+  color: var(--white);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  transform: translate(-50%, -110%);
+  @include transEase(transform);
+
+  &:focus {
+    color: var(--white);
+    transform: translate(-50%, 0);
+  }
+}
+
+// Screen-reader-only text. Use on icon-only buttons that have no label.
+.sr-only,
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// Same, but becomes visible when focused.
+.sr-only-focusable:not(:focus):not(:focus-within) {
+  @include visually-hidden;
+}
+
+// Lock body scroll without the layout jumping when the scrollbar disappears.
+// main.js sets --scrollbar-width before adding this class.
+body.is-locked {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0px);
+}

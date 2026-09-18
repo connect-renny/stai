@@ -1,0 +1,10 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Swiper theming — navigation lives outside the slider (see .makers__nav)
+// ═══════════════════════════════════════════════════════════════════════════
+
+.swiper {
+  --swiper-theme-color: var(--cyan);
+  width: 100%;
+}

@@ -1,0 +1,120 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  09 · OUTRO — the closing message, register CTA and the STAI mark
+// ═══════════════════════════════════════════════════════════════════════════
+
+.outro {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 60% at 50% 100%, rgb(var(--violet-rgb) / 14%), transparent 70%),
+    var(--color-bg);
+
+  &__field {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .container {
+    position: relative;
+  }
+
+  &__title {
+    margin: 0 auto clamp(28px, 4vw, 44px);
+    font-size: var(--fs-fluid-7xl);
+    font-weight: var(--fw-black);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+    max-width: 12ch;
+  }
+
+  &__lines {
+    display: grid;
+    gap: 6px;
+    margin-bottom: clamp(36px, 5vw, 56px);
+
+    li {
+      font-size: var(--fs-fluid-lg);
+      font-weight: var(--fw-light);
+      color: var(--color-text-muted);
+
+      &:last-child {
+        color: var(--color-heading);
+        font-weight: var(--fw-normal);
+      }
+    }
+  }
+
+  &__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: clamp(56px, 8vw, 104px);
+  }
+
+  &__mark {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+
+    &-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin-bottom: 14px;
+
+      span {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 1px solid rgb(var(--cyan-rgb) / 50%);
+        border-right-color: transparent;
+        animation: spin 6s linear infinite;
+
+        &:last-child {
+          inset: 12px;
+          border-color: rgb(var(--violet-rgb) / 60%);
+          border-left-color: transparent;
+          animation: spin 4s linear infinite reverse;
+        }
+      }
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--color-heading);
+        box-shadow: 0 0 20px var(--cyan);
+        translate: -50% -50%;
+      }
+    }
+
+    &-name {
+      font-family: var(--display-font);
+      font-weight: var(--fw-black);
+      font-size: var(--fs-fluid-2xl);
+      letter-spacing: 0.08em;
+      color: var(--color-heading);
+    }
+
+    &-line {
+      color: var(--color-text-muted);
+    }
+  }
+}

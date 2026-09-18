@@ -1,0 +1,131 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Small helpers you reach for on every project
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── Line clamp ────────────────────────────────────────────────────────────
+@each $i in $line-clamps {
+  .line-clamp-#{$i} {
+    @include line-clamp($i);
+  }
+}
+
+.truncate {
+  @include truncate;
+}
+
+// ─── Font weight ───────────────────────────────────────────────────────────
+@each $i in $font-weights {
+  .fw-#{$i} {
+    font-weight: #{$i} !important;
+  }
+}
+
+// ─── Font size ─────────────────────────────────────────────────────────────
+// Mirrors the token scale: .fs-sm .fs-2xl .fs-fluid-5xl …
+$font-sizes: "xs", "sm", "base", "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl",
+  "6xl", "7xl", "8xl", "9xl", "10xl";
+
+@each $name in $font-sizes {
+  .fs-#{$name} {
+    font-size: var(--fs-#{$name}) !important;
+  }
+}
+
+$fluid-sizes: "md", "lg", "xl", "2xl", "3xl", "4xl", "5xl", "6xl", "7xl";
+
+@each $name in $fluid-sizes {
+  .fs-fluid-#{$name} {
+    font-size: var(--fs-fluid-#{$name}) !important;
+  }
+}
+
+// ─── Colour ────────────────────────────────────────────────────────────────
+$text-colors: "brand", "accent", "text", "text-muted", "success", "warning",
+  "danger", "info";
+
+@each $name in $text-colors {
+  .text-#{$name} {
+    color: var(--color-#{$name}) !important;
+  }
+}
+
+.text-white { color: var(--white) !important; }
+
+$bg-colors: "brand", "accent", "bg", "surface";
+
+@each $name in $bg-colors {
+  .bg-#{$name} {
+    background-color: var(--color-#{$name}) !important;
+  }
+}
+
+// ─── Radius ────────────────────────────────────────────────────────────────
+@each $name in ("none", "sm", "md", "lg", "xl", "pill", "circle") {
+  .radius-#{$name} {
+    border-radius: var(--radius-#{$name}) !important;
+  }
+}
+
+// ─── Elevation ─────────────────────────────────────────────────────────────
+@each $name in ("sm", "md", "lg") {
+  .shadow-#{$name} {
+    box-shadow: var(--shadow-#{$name}) !important;
+  }
+}
+
+.shadow-none { box-shadow: none !important; }
+
+// ─── Aspect ratio ──────────────────────────────────────────────────────────
+.ratio-16x9 { @include ratio(16, 9); }
+.ratio-4x3  { @include ratio(4, 3); }
+.ratio-3x2  { @include ratio(3, 2); }
+.ratio-1x1  { @include ratio(1, 1); }
+.ratio-21x9 { @include ratio(21, 9); }
+
+// ─── Object fit ────────────────────────────────────────────────────────────
+.object-cover   { object-fit: cover; width: 100%; height: 100%; }
+.object-contain { object-fit: contain; width: 100%; height: 100%; }
+
+// ─── Layout shorthands ─────────────────────────────────────────────────────
+.flex-center  { @include flex-center; }
+.flex-between { @include flex-between; }
+.stack        { display: flex; flex-direction: column; }
+.full-cover   { @include cover; }
+
+// Cap running text at a readable measure.
+.measure    { max-width: 68ch; }
+.measure-sm { max-width: 48ch; }
+
+// Cancel a link's inherited colour and let the parent decide.
+.link-inherit {
+  color: inherit;
+
+  @include hover {
+    color: inherit;
+    opacity: 0.75;
+  }
+}
+
+// Escape a container and run edge-to-edge.
+.full-bleed {
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
+}
+
+// ─── State ─────────────────────────────────────────────────────────────────
+.pointer-none { pointer-events: none !important; }
+.pointer-auto { pointer-events: auto !important; }
+.no-select    { user-select: none; }
+.cursor-pointer { cursor: pointer; }
+
+// Hide only at a given breakpoint and below/above.
+@each $name in $utility-breakpoints {
+  @include mq-up($name) {
+    .hide-#{$name}-up { display: none !important; }
+  }
+  @include mq-down($name) {
+    .hide-#{$name}-down { display: none !important; }
+  }
+}

@@ -1,0 +1,164 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Design tokens — STAI 2026 "Future World"
+//  Deep-navy ground, electric cyan + violet accents, a whisper of magenta.
+// ═══════════════════════════════════════════════════════════════════════════
+
+:root {
+  color-scheme: dark;
+
+  // ─── Colours — base ──────────────────────────────────────────────────────
+  --white: #fff;
+  --black: #000;
+
+  // ─── Colours — brand ─────────────────────────────────────────────────────
+  --cyan: #5ef2ff;
+  --cyan-rgb: 94 242 255;
+  --violet: #9d7bff;
+  --violet-rgb: 157 123 255;
+  --magenta: #ff6ad5;
+  --magenta-rgb: 255 106 213;
+
+  --color-brand: var(--cyan);
+  --color-brand-rgb: var(--cyan-rgb);
+  --color-accent: var(--violet);
+
+  // ─── Colours — semantic ──────────────────────────────────────────────────
+  --color-primary: var(--cyan);
+  --color-text: #d9deef;
+  --color-text-muted: #8b93b3;
+  --color-text-dim: #5a628a;
+  --color-heading: #f4f6ff;
+  --color-bg: #060913;
+  --color-bg-2: #0a0e1d;
+  --color-bg-3: #0f1428;
+  --color-surface: rgb(255 255 255 / 3%);
+  --color-surface-2: rgb(255 255 255 / 5%);
+  --color-border: rgb(255 255 255 / 9%);
+  --color-border-strong: rgb(255 255 255 / 16%);
+  --color-link: var(--color-heading);
+  --color-link-hover: var(--cyan);
+
+  // ─── Colours — feedback ──────────────────────────────────────────────────
+  --color-success: #4dffc3;
+  --color-warning: #ffd166;
+  --color-danger: #ff4d6d;
+  --color-info: var(--cyan);
+
+  // ─── Gradients ───────────────────────────────────────────────────────────
+  --grad-brand: linear-gradient(92deg, var(--cyan) 0%, var(--violet) 60%, var(--magenta) 120%);
+  --grad-text: linear-gradient(92deg, #c9fbff 0%, var(--cyan) 35%, var(--violet) 100%);
+
+  // ─── Typography ──────────────────────────────────────────────────────────
+  --display-font: "Syne", "Segoe UI", system-ui, sans-serif;
+  --body-font: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --mono-font: "JetBrains Mono", ui-monospace, "SF Mono", consolas, monospace;
+  --primary-font: var(--body-font);
+  --heading-font: var(--display-font);
+
+  --fw-light: 300;
+  --fw-normal: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+  --fw-black: 800;
+
+  --lh-tight: 1;
+  --lh-snug: 1.2;
+  --lh-normal: 1.65;
+  --lh-loose: 1.85;
+
+  --ls-tight: -0.03em;
+  --ls-normal: 0;
+  --ls-wide: 0.08em;
+  --ls-wider: 0.22em;
+
+  // ─── Font size scale (fixed) ─────────────────────────────────────────────
+  --fs-2xs: 0.6875rem; // 11px
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 1.875rem;
+  --fs-3xl: 2rem;
+  --fs-4xl: 2.25rem;
+  --fs-5xl: 2.5rem;
+  --fs-6xl: 2.875rem;
+  --fs-7xl: 3rem;
+  --fs-8xl: 3.25rem;
+  --fs-9xl: 3.5rem;
+  --fs-10xl: 4rem;
+
+  // ─── Font size scale (fluid) ─────────────────────────────────────────────
+  --fs-fluid-md: #{fluid(16, 18)};
+  --fs-fluid-lg: #{fluid(17, 21)};
+  --fs-fluid-xl: #{fluid(20, 26)};
+  --fs-fluid-2xl: #{fluid(24, 32)};
+  --fs-fluid-3xl: #{fluid(26, 40)};
+  --fs-fluid-4xl: #{fluid(30, 52)};
+  --fs-fluid-5xl: #{fluid(34, 64)};
+  --fs-fluid-6xl: #{fluid(40, 84)};
+  --fs-fluid-7xl: #{fluid(48, 120)};
+  --fs-fluid-8xl: #{fluid(64, 176)};
+
+  // ─── Spacing ─────────────────────────────────────────────────────────────
+  --space-3xs: 4px;
+  --space-2xs: 8px;
+  --space-xs: 12px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+
+  --section-space: #{fluid(88, 160)};
+  --container-gutter: #{fluid(20, 40)};
+  --container-max: #{$container-max};
+
+  // ─── Radius ──────────────────────────────────────────────────────────────
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 10px;
+  --radius-lg: 18px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --radius-circle: 50%;
+
+  // ─── Elevation / glow ────────────────────────────────────────────────────
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%);
+  --shadow-md: 0 12px 32px rgb(0 0 0 / 45%);
+  --shadow-lg: 0 32px 80px rgb(0 0 0 / 55%);
+  --shadow-header: 0 1px 0 var(--color-border);
+  --glow-cyan: 0 0 24px rgb(var(--cyan-rgb) / 35%), 0 0 64px rgb(var(--cyan-rgb) / 15%);
+  --glow-violet: 0 0 24px rgb(var(--violet-rgb) / 35%), 0 0 64px rgb(var(--violet-rgb) / 15%);
+
+  // ─── Motion ──────────────────────────────────────────────────────────────
+  --transition-duration: 0.35s;
+  --transition-fast: 0.18s;
+  --transition-slow: 0.8s;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  // ─── Layering ────────────────────────────────────────────────────────────
+  --z-below: -1;
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-header: 200;
+  --z-drawer: 300;
+  --z-overlay: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+  --z-gate: 900;
+  --z-cursor: 1000;
+  --z-loader: 9999;
+
+  // ─── Component sizing ────────────────────────────────────────────────────
+  --header-height: 80px;
+  --header-height-fixed: 68px;
+}

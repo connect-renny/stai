@@ -1,0 +1,32 @@
+{
+  "name": "stai-2026-future-world",
+  "version": "6.0.0",
+  "private": true,
+  "description": "STAI 2026 — Future World. Static site: Bootstrap 5 grid/icons, Swiper, Lenis, SCSS design tokens.",
+  "scripts": {
+    "dev": "npm-run-all --parallel watch:css serve",
+    "serve": "browser-sync start --server --files \"*.html, assets/css/*.css, assets/js/*.js\" --no-notify --port 3000",
+    "watch:css": "sass --watch scss/style.scss:assets/css/style.css --style=expanded --source-map",
+    "build:css": "sass scss/style.scss:assets/css/style.css --style=expanded --no-source-map && sass scss/style.scss:assets/css/style.min.css --style=compressed --no-source-map",
+    "prefix": "postcss assets/css/style.css assets/css/style.min.css --replace",
+    "build": "npm run build:css && npm run prefix",
+    "format": "prettier --write \"**/*.{html,scss,js,json,md}\"",
+    "clean": "rimraf assets/css/style.css assets/css/style.min.css assets/css/*.map"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "Firefox ESR",
+    "not dead"
+  ],
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "browser-sync": "^3.0.3",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.49",
+    "postcss-cli": "^11.0.0",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "sass": "^1.83.0"
+  }
+}

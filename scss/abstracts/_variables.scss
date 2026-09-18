@@ -1,0 +1,48 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  Sass variables — compile-time only. Anything that needs to be readable or
+//  overridable at runtime lives in base/_root.scss as a CSS custom property.
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── Breakpoints ───────────────────────────────────────────────────────────
+// Aligned 1:1 with Bootstrap 5 so `.px-md-16px` and `.px-md-3` kick in at the
+// same width. `xxxl` is the extra step Bootstrap doesn't ship.
+$bp-sm: 576px;
+$bp-md: 768px;
+$bp-lg: 992px;
+$bp-xl: 1200px;
+$bp-xxl: 1400px;
+$bp-xxxl: 1600px;
+
+$breakpoints: (
+  "sm": $bp-sm,
+  "md": $bp-md,
+  "lg": $bp-lg,
+  "xl": $bp-xl,
+  "xxl": $bp-xxl,
+  "xxxl": $bp-xxxl,
+);
+
+// ─── Container ─────────────────────────────────────────────────────────────
+$container-max: 1600px;
+$container-gutter: 16px;
+
+// ─── Utility generation ────────────────────────────────────────────────────
+// These two lists are the size dials for the whole stylesheet — the spacing
+// utilities are by far the largest thing it emits.
+//
+//   rules ≈ 19 properties × $spaces × (1 + $utility-breakpoints)
+//
+// Defaults below produce ~1,100 rules (~17KB minified, ~4KB gzipped). Add a
+// value or a breakpoint only when you actually reach for it.
+$spaces: 0, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 100, 128;
+
+// Which breakpoints get responsive variants (`.pt-md-24px`). "sm" and "xxxl"
+// are left out by default because desktop-up overrides at 576px and 1600px
+// are rare — add them here if a build needs them.
+$utility-breakpoints: "md", "lg", "xl", "xxl";
+
+// ─── Font weights available as .fw-* helpers ───────────────────────────────
+$font-weights: 300, 400, 500, 600, 700, 800;
+
+// ─── Line clamp helpers to generate ────────────────────────────────────────
+$line-clamps: 1, 2, 3, 4, 5, 6;

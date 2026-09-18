@@ -1,0 +1,197 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  01 · THE THEME — first screen of the main site
+// ═══════════════════════════════════════════════════════════════════════════
+
+.site {
+  position: relative;
+  min-height: 100svh;
+  background: var(--color-bg);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+
+  &.is-live {
+    opacity: 1;
+  }
+}
+
+.theme {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: calc(var(--header-height) + var(--space-2xl));
+  padding-bottom: 0;
+  overflow: hidden;
+
+  &__bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  &__orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+    animation: floatY 12s ease-in-out infinite;
+
+    &--cyan {
+      width: 50vw;
+      height: 50vw;
+      right: -15vw;
+      top: -10vw;
+      background: radial-gradient(circle, rgb(var(--cyan-rgb) / 35%), transparent 65%);
+    }
+
+    &--violet {
+      width: 45vw;
+      height: 45vw;
+      left: -15vw;
+      bottom: -5vw;
+      background: radial-gradient(circle, rgb(var(--violet-rgb) / 40%), transparent 65%);
+      animation-delay: -6s;
+    }
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: clamp(24px, 4vw, 48px);
+
+    .label {
+      margin-bottom: 0;
+    }
+  }
+
+  &__aside {
+    color: var(--color-text-dim);
+
+    @include mq-down("md") {
+      display: none;
+    }
+  }
+
+  &__title {
+    margin: 0 0 clamp(32px, 5vw, 64px);
+    font-size: var(--fs-fluid-7xl);
+    font-weight: var(--fw-black);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+    max-width: 14ch;
+  }
+
+  &__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-xl);
+    padding-bottom: clamp(48px, 8vw, 96px);
+
+    @include mq-down("md") {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-lg);
+    }
+  }
+
+  &__body {
+    max-width: 52ch;
+    font-size: var(--fs-fluid-lg);
+    font-weight: var(--fw-light);
+    line-height: 1.7;
+    color: var(--color-text-muted);
+
+    strong {
+      display: block;
+      margin-top: 0.8em;
+      font-weight: var(--fw-medium);
+      color: var(--color-heading);
+    }
+  }
+
+  &__scroll {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    color: var(--color-text-muted);
+    flex: none;
+
+    &-line {
+      display: block;
+      width: 1px;
+      height: 64px;
+      background: linear-gradient(180deg, var(--cyan), var(--violet));
+      animation: scrollLine 2.2s var(--ease-in-out) infinite;
+    }
+
+    @include hover {
+      color: var(--cyan);
+    }
+
+    @include mq-down("md") {
+      align-items: flex-start;
+    }
+  }
+}
+
+// ─── Ticker strip ──────────────────────────────────────────────────────────
+.ticker {
+  position: relative;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  padding-block: 18px;
+  overflow: hidden;
+  background: rgb(255 255 255 / 1.5%);
+  mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+
+  &__track {
+    display: flex;
+    gap: 0;
+    width: max-content;
+    animation: marquee 40s linear infinite;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding-inline: 36px;
+      font-family: var(--display-font);
+      font-weight: var(--fw-semibold);
+      font-size: var(--fs-md);
+      letter-spacing: 0.02em;
+      color: var(--color-text-muted);
+      white-space: nowrap;
+
+      i {
+        color: var(--cyan);
+        font-size: 0.9em;
+      }
+
+      &::after {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        margin-left: 36px;
+        background: var(--violet);
+        opacity: 0.6;
+      }
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover &__track {
+      animation-play-state: paused;
+    }
+  }
+}

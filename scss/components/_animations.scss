@@ -1,0 +1,273 @@
+// ═══════════════════════════════════════════════════════════════════════════
+//  Keyframes + reveal-on-scroll
+//  Prefer transform/opacity — they stay on the compositor.
+// ═══════════════════════════════════════════════════════════════════════════
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotateAngle {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@keyframes nebulaDrift {
+  from {
+    transform: translate3d(-3%, -2%, 0) rotate(0deg);
+  }
+  to {
+    transform: translate3d(3%, 3%, 0) rotate(4deg);
+  }
+}
+
+@keyframes sweepFill {
+  0%,
+  10% {
+    clip-path: inset(0 100% 0 0);
+  }
+  45%,
+  60% {
+    clip-path: inset(0 0 0 0);
+  }
+  90%,
+  100% {
+    clip-path: inset(0 0 0 100%);
+  }
+}
+
+@keyframes logIn {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes floatY {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes radarSweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blip {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  10%,
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes scrollLine {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+@keyframes orbitDot {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rollIn {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Reveal-on-scroll — add `data-reveal` and main.js sets `.is-revealed`.
+// ═══════════════════════════════════════════════════════════════════════════
+
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s var(--ease-out),
+    transform 0.9s var(--ease-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+[data-reveal="left"] {
+  transform: translateX(-32px);
+}
+
+[data-reveal="right"] {
+  transform: translateX(32px);
+}
+
+[data-reveal="zoom"] {
+  transform: scale(0.96) translateY(16px);
+}
+
+[data-reveal="fade"] {
+  transform: none;
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+.no-js [data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Blur reveal — text resolves out of a blur, one line after another.
+//
+//  .blur-line   sibling lines stagger on nth-child (title words)
+//  .blur-after  everything that follows, on `--i` (kicker, tag, CTA, hint)
+//
+//  Held while the nearest `.is-held` ancestor keeps the class (the gate,
+//  behind the preloader); released when it's removed, or on `.is-revealed`.
+// ═══════════════════════════════════════════════════════════════════════════
+
+.blur-line,
+.blur-after {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(14px);
+  transition:
+    opacity 0.85s var(--ease-out),
+    filter 0.85s var(--ease-out),
+    transform 0.85s var(--ease-out);
+  will-change: opacity, filter, transform;
+}
+
+.blur-line {
+  display: inline-block;
+  white-space: nowrap;
+
+  &:nth-child(1) {
+    transition-delay: 80ms;
+  }
+
+  &:nth-child(2) {
+    transition-delay: 190ms;
+  }
+
+  &:nth-child(3) {
+    transition-delay: 300ms;
+  }
+
+  &:nth-child(4) {
+    transition-delay: 410ms;
+  }
+}
+
+.blur-after {
+  display: block;
+  transition-delay: calc(80ms + var(--i, 0) * 70ms);
+}
+
+.is-revealed .blur-line,
+.is-revealed .blur-after,
+.no-js .blur-line,
+.no-js .blur-after {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+
+// Pinned until the preloader lifts (main.js drops the class)
+.is-held .blur-line,
+.is-held .blur-after {
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blur-line,
+  .blur-after {
+    transition: none;
+    will-change: auto;
+  }
+}

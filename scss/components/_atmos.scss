@@ -1,0 +1,103 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Atmosphere — fixed grain + faint grid that sit over the whole site
+// ═══════════════════════════════════════════════════════════════════════════
+
+.atmos {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-cursor);
+  pointer-events: none;
+
+  &__grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.045;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  &__grid {
+    position: absolute;
+    inset: 0;
+    opacity: 0.35;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px);
+    background-size: 120px 120px;
+    mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, black 30%, transparent 80%);
+  }
+}
+
+// ─── Custom cursor ─────────────────────────────────────────────────────────
+.cursor {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-cursor);
+  pointer-events: none;
+
+  @media (hover: hover) and (pointer: fine) {
+    .js.has-cursor & {
+      display: block;
+    }
+  }
+
+  &__dot,
+  &__ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+    translate: var(--x, -100px) var(--y, -100px);
+  }
+
+  &__ring {
+    width: 36px;
+    height: 36px;
+    border: 1px solid rgb(var(--cyan-rgb) / 60%);
+    translate: var(--x, -100px) var(--y, -100px);
+    transition:
+      width 0.35s var(--ease-out),
+      height 0.35s var(--ease-out),
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      opacity 0.3s ease;
+  }
+
+  &.is-hover &__ring {
+    width: 64px;
+    height: 64px;
+    background: rgb(var(--cyan-rgb) / 8%);
+    border-color: rgb(var(--cyan-rgb) / 30%);
+  }
+
+  &.is-down &__ring {
+    width: 24px;
+    height: 24px;
+  }
+
+  &.is-out {
+    opacity: 0;
+  }
+}
+
+.js.has-cursor {
+  cursor: none;
+
+  a,
+  button,
+  [data-cursor] {
+    cursor: none;
+  }
+}

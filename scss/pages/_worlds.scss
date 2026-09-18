@@ -1,0 +1,325 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  02 · SIX WORLDS — expanding blinds on desktop, stacked cards on mobile
+// ═══════════════════════════════════════════════════════════════════════════
+
+.worlds {
+  padding-bottom: 0;
+}
+
+.panels {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @include mq-up("lg") {
+    flex-direction: row;
+    gap: 8px;
+    height: clamp(520px, 72vh, 720px);
+  }
+}
+
+.panel {
+  --accent: var(--cyan);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 300px;
+  padding: 26px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--color-bg-2), var(--color-bg));
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  transition:
+    flex-grow 0.9s var(--ease-expo),
+    border-color 0.5s ease,
+    box-shadow 0.6s ease,
+    transform 0.6s var(--ease-expo);
+
+  // Accent wash that fades in when active
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(70% 60% at 30% 100%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+      linear-gradient(180deg, transparent 40%, rgb(0 0 0 / 40%));
+    opacity: 0;
+    transition: opacity 0.7s ease;
+    z-index: 0;
+  }
+
+  // Thin accent line along the bottom edge
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.9s var(--ease-expo);
+    z-index: 2;
+  }
+
+  &__art {
+    position: absolute;
+    inset: 0;
+    color: var(--accent);
+    opacity: 0.22;
+    z-index: 0;
+    transition:
+      opacity 0.7s ease,
+      transform 1.2s var(--ease-expo);
+    transform: scale(1.05);
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .art-sat {
+      animation: orbitDot 12s linear infinite;
+      transform-origin: 200px 300px;
+    }
+
+    .art-nodes circle {
+      animation: blink 3s ease-in-out infinite;
+
+      &:nth-child(2n) {
+        animation-delay: 1s;
+      }
+
+      &:nth-child(3n) {
+        animation-delay: 2s;
+      }
+    }
+
+    .art-windows rect {
+      animation: blink 4s steps(2, start) infinite;
+
+      @for $i from 1 through 12 {
+        &:nth-child(#{$i}) {
+          animation-delay: #{$i * 0.37}s;
+        }
+      }
+    }
+  }
+
+  &__meta {
+    position: absolute;
+    top: 22px;
+    left: 26px;
+    right: 26px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--accent);
+    z-index: 2;
+    font-size: var(--fs-2xs);
+  }
+
+  &__q {
+    display: none;
+    color: var(--color-text-dim);
+    text-transform: none;
+    letter-spacing: 0.04em;
+    max-width: 30ch;
+    text-align: right;
+  }
+
+  // Collapsed state — vertical title (desktop only)
+  &__side {
+    display: none;
+  }
+
+  &__body {
+    position: relative;
+    z-index: 2;
+  }
+
+  &__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    margin-bottom: 18px;
+    border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+    border-radius: 12px;
+    color: var(--accent);
+    font-size: 1.25rem;
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+
+  &__title {
+    margin-bottom: 12px;
+    font-size: var(--fs-fluid-3xl);
+    font-weight: var(--fw-bold);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--color-heading);
+  }
+
+  &__text {
+    max-width: 30ch;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-light);
+    color: var(--color-text-muted);
+    line-height: 1.55;
+  }
+
+  // Hover glow on any viewport
+  @include hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 12%, transparent);
+
+    &::before {
+      opacity: 1;
+    }
+
+    &::after {
+      transform: scaleX(1);
+    }
+
+    .panel__art {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+  }
+
+  // ─── Desktop blinds ──────────────────────────────────────────────────────
+  @include mq-up("lg") {
+    flex: 1 1 0;
+    min-height: 0;
+    padding: 32px;
+
+    &__meta {
+      top: 26px;
+      left: 32px;
+      right: 32px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition:
+        opacity 0.5s ease 0.2s,
+        transform 0.5s var(--ease-out) 0.2s;
+    }
+
+    &__q {
+      display: none; // the body copy already asks the question
+    }
+
+    &__side {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0;
+      z-index: 3;
+      opacity: 1;
+      transition: opacity 0.35s ease;
+
+      &-num {
+        color: var(--accent);
+        font-size: var(--fs-2xs);
+      }
+
+      &-title {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        font-family: var(--display-font);
+        font-weight: var(--fw-bold);
+        font-size: 1.25rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        transition: color 0.4s ease;
+      }
+    }
+
+    &__body {
+      opacity: 0;
+      transform: translateY(20px);
+      transition:
+        opacity 0.4s ease,
+        transform 0.5s var(--ease-out);
+    }
+
+    &__title {
+      font-size: clamp(1.5rem, 2.4vw, 3rem);
+    }
+
+    @include hover {
+      .panel__side-title {
+        color: var(--color-heading);
+      }
+    }
+
+    &.is-active {
+      flex-grow: 4.5;
+
+      @include mq-up("xl") {
+        flex-grow: 3.4;
+      }
+      border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      box-shadow: 0 0 80px color-mix(in srgb, var(--accent) 12%, transparent);
+
+      &::before {
+        opacity: 1;
+      }
+
+      &::after {
+        transform: scaleX(1);
+      }
+
+      .panel__art {
+        opacity: 0.55;
+        transform: scale(1);
+      }
+
+      .panel__side {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .panel__meta {
+        opacity: 1;
+        transform: none;
+      }
+
+      .panel__body {
+        opacity: 1;
+        transform: none;
+        transition-delay: 0.25s;
+      }
+    }
+  }
+}
+
+// On touch/mobile the art is always a little visible
+@include mq-down("lg") {
+  .panel {
+    &::before {
+      opacity: 1;
+    }
+
+    &::after {
+      transform: scaleX(1);
+    }
+
+    &__art {
+      opacity: 0.35;
+    }
+  }
+}

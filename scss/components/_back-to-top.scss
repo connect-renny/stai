@@ -1,0 +1,44 @@
+@use "../abstracts" as *;
+
+.return-top {
+  @include flex-center;
+  position: fixed;
+  bottom: 1.25rem;
+  inset-inline-end: 1.25rem;
+  z-index: var(--z-sticky);
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid var(--color-border-strong);
+  background: rgb(10 14 29 / 80%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--color-heading);
+  border-radius: var(--radius-circle);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  @include transEase((opacity, visibility, transform, border-color, color));
+  @include focus-ring;
+
+  i {
+    font-size: 1rem;
+    transition: transform 0.4s var(--ease-expo);
+  }
+
+  &.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  @include hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+
+    i {
+      transform: translateY(-3px);
+    }
+  }
+}

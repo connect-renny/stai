@@ -1,0 +1,170 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Buttons
+// ═══════════════════════════════════════════════════════════════════════════
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--display-font);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  isolation: isolate;
+  @include transEase((color, border-color, background-color, box-shadow, transform));
+  @include focus-ring;
+
+  i {
+    font-size: 1em;
+    transition: transform 0.4s var(--ease-expo);
+  }
+
+  @include hover {
+    i {
+      transform: translateX(4px);
+    }
+  }
+
+  &--sm {
+    padding: 11px 18px;
+    font-size: var(--fs-xs);
+    gap: 8px;
+  }
+
+  &--lg {
+    padding: 20px 36px;
+    font-size: var(--fs-base);
+  }
+
+  // Filled gradient with a sweeping highlight
+  &--primary {
+    color: var(--color-bg);
+    background: var(--grad-brand);
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    box-shadow: 0 0 0 rgb(var(--cyan-rgb) / 0%);
+    transition:
+      background-position 0.6s var(--ease-expo),
+      box-shadow 0.4s ease,
+      transform 0.4s var(--ease-expo);
+
+    @include hover {
+      color: var(--color-bg);
+      background-position: 100% 50%;
+      box-shadow: var(--glow-cyan);
+      transform: translateY(-2px);
+    }
+  }
+
+  // Thin-line glass
+  &--ghost {
+    color: var(--color-heading);
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    @include hover {
+      color: var(--color-heading);
+      border-color: rgb(var(--cyan-rgb) / 60%);
+      background: rgb(var(--cyan-rgb) / 8%);
+      box-shadow: 0 0 24px rgb(var(--cyan-rgb) / 15%);
+    }
+  }
+}
+
+// Circular icon button (slider arrows)
+.circ-btn {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-circle);
+  color: var(--color-heading);
+  background: var(--color-surface);
+  @include transEase((border-color, background-color, color, transform));
+
+  @include hover {
+    border-color: var(--cyan);
+    background: rgb(var(--cyan-rgb) / 10%);
+    color: var(--cyan);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+}
+
+// Inline arrow link
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono-font);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cyan);
+
+  i {
+    transition: transform 0.4s var(--ease-expo);
+  }
+
+  @include hover {
+    color: var(--color-heading);
+
+    i {
+      transform: translateX(5px);
+    }
+  }
+}
+
+// Blinking status dot
+.pulse {
+  position: relative;
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+  flex: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 1px solid var(--cyan);
+    animation: pulseRing 2s var(--ease-out) infinite;
+  }
+
+  &--small {
+    width: 7px;
+    height: 7px;
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  &--red {
+    background: var(--color-danger);
+    box-shadow: 0 0 12px var(--color-danger);
+
+    &::after {
+      border-color: var(--color-danger);
+    }
+  }
+}

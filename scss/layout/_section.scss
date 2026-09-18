@@ -1,0 +1,101 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Section rhythm + the shared "label / title / body" head block
+// ═══════════════════════════════════════════════════════════════════════════
+
+section {
+  position: relative;
+  padding-block: var(--section-space);
+}
+
+// Technical section label: "01 ——— THE THEME"
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: var(--space-md);
+  color: var(--color-text-muted);
+
+  &__num {
+    color: var(--cyan);
+  }
+
+  &__line {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--cyan), transparent);
+  }
+
+  &--center {
+    justify-content: center;
+    display: flex;
+  }
+}
+
+.section-head {
+  max-width: 760px;
+  margin-bottom: clamp(40px, 6vw, 72px);
+
+  &--center {
+    margin-inline: auto;
+    text-align: center;
+
+    .section-body {
+      margin-inline: auto;
+    }
+  }
+}
+
+.section-title {
+  font-size: var(--fs-fluid-5xl);
+  font-weight: var(--fw-bold);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  margin-bottom: var(--space-md);
+
+  &--xl {
+    font-size: var(--fs-fluid-6xl);
+  }
+}
+
+.section-body {
+  max-width: 560px;
+  font-size: var(--fs-fluid-lg);
+  font-weight: var(--fw-light);
+  line-height: 1.7;
+  color: var(--color-text-muted);
+
+  strong {
+    font-weight: var(--fw-medium);
+    color: var(--color-heading);
+  }
+}
+
+// Split-text headline: each .line clips words that slide up on reveal.
+[data-split] .line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+
+  .word {
+    display: inline-block;
+    transform: translateY(110%) rotate(2deg);
+    transform-origin: left bottom;
+    transition: transform 1s var(--ease-expo);
+    transition-delay: var(--d, 0ms);
+  }
+}
+
+[data-split].is-revealed .line .word {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-split] .line .word {
+    transform: none;
+    transition: none;
+  }
+}
