@@ -35,6 +35,8 @@
 @use "components/swiper";
 @use "components/smooth-scroll";
 @use "components/back-to-top";
+@use "components/drift";
+@use "components/edge-glow";
 
 // 5. Pages — one partial per screen, in scroll order
 @use "pages/theme";

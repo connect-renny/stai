@@ -4,7 +4,7 @@
 
    Boot order (see App.init at the bottom):
      cursor → reveal → gate → preloader → clocks → header/drawer → panels →
-     lab → counters → makers → poll → countdown → live → outroField → returnTop
+     lab → counters → makers → poll → countdown → live → outroField → drift → returnTop
    The preloader holds the gate (title reveal + video) until it lifts;
    Lenis smooth scroll starts only once the gate has opened.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -974,6 +974,20 @@
     }).observe(canvas);
   };
 
+  /* ─── Drift bands ────────────────────────────────────────────────────── */
+  // The space-scene bands between sections (and the comet layer across the
+  // vote section) only animate while they're near the viewport; off-screen
+  // they sit paused (see _drift.scss / _vote.scss).
+  App.drift = () => {
+    const bands = $$(".drift, .vote__comets");
+    if (!bands.length) return;
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach((en) => en.target.classList.toggle("is-active", en.isIntersecting)),
+      { rootMargin: "200px 0px" }
+    );
+    bands.forEach((b) => io.observe(b));
+  };
+
   /* ─── Back to top ────────────────────────────────────────────────────── */
   App.returnTop = () => {
     const btn = $("#returnTop");
@@ -1004,6 +1018,7 @@
     App.countdown();
     App.live();
     App.outroField();
+    App.drift();
     App.returnTop();
   };
 

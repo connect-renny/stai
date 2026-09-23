@@ -1712,6 +1712,23 @@ body.is-gated {
 .gate__kicker-sep {
   color: var(--color-text-dim);
 }
+@media (max-width: 575.98px) {
+  .gate__kicker-sep {
+    display: none;
+  }
+}
+.gate__kicker-set {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+}
+@media (max-width: 575.98px) {
+  .gate__kicker-set {
+    letter-spacing: 0.22em;
+    gap: 8px;
+  }
+}
 .gate__title {
   display: flex;
   flex-direction: column;
@@ -2036,6 +2053,641 @@ html.lenis body {
   }
 }
 
+.drift {
+  --h: calc(var(--section-space) * 2);
+  --shift: 0px;
+  --tile: 560px;
+  position: relative;
+  z-index: var(--z-base);
+  height: 0;
+  pointer-events: none;
+}
+.drift__inner {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(var(--h) / -2 + var(--shift));
+  height: var(--h);
+  overflow: hidden;
+  contain: layout paint;
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+}
+.drift:not(.is-active) .drift__inner *, .drift:not(.is-active) .drift__stars::before, .drift:not(.is-active) .drift__stars::after {
+  animation-play-state: paused !important;
+}
+.drift__stars {
+  position: absolute;
+  inset: 0;
+}
+.drift__stars::before, .drift__stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: calc(100% + var(--tile));
+  background-repeat: repeat;
+  background-size: var(--tile) 100%;
+  will-change: transform;
+}
+.drift__stars::before {
+  background-image: radial-gradient(1.8px 1.8px at 38px 42px, rgba(255, 255, 255, 0.9), transparent 100%), radial-gradient(1.6px 1.6px at 180px 120px, rgb(var(--cyan-rgb)/85%), transparent 100%), radial-gradient(2px 2px at 312px 20px, rgba(255, 255, 255, 0.85), transparent 100%), radial-gradient(1.4px 1.4px at 420px 160px, rgba(255, 255, 255, 0.8), transparent 100%), radial-gradient(1.7px 1.7px at 500px 70px, rgb(var(--violet-rgb)/90%), transparent 100%), radial-gradient(1.4px 1.4px at 96px 200px, rgba(255, 255, 255, 0.75), transparent 100%), radial-gradient(1.6px 1.6px at 250px 230px, rgba(255, 255, 255, 0.8), transparent 100%);
+  animation: starDrift 160s linear infinite, starTwinkle 9s ease-in-out infinite;
+}
+.drift__stars::after {
+  background-image: radial-gradient(1px 1px at 20px 90px, rgba(255, 255, 255, 0.5), transparent 100%), radial-gradient(1px 1px at 140px 30px, rgba(255, 255, 255, 0.45), transparent 100%), radial-gradient(1.1px 1.1px at 230px 170px, rgba(255, 255, 255, 0.5), transparent 100%), radial-gradient(1px 1px at 360px 110px, rgb(var(--cyan-rgb)/50%), transparent 100%), radial-gradient(0.9px 0.9px at 460px 210px, rgba(255, 255, 255, 0.45), transparent 100%), radial-gradient(1.1px 1.1px at 540px 150px, rgba(255, 255, 255, 0.45), transparent 100%), radial-gradient(1px 1px at 70px 250px, rgba(255, 255, 255, 0.45), transparent 100%), radial-gradient(1px 1px at 400px 40px, rgba(255, 255, 255, 0.45), transparent 100%);
+  animation: starDrift 280s linear infinite, starTwinkle 13s ease-in-out infinite reverse;
+}
+.drift__obj {
+  position: absolute;
+  display: block;
+  width: var(--w, 32px);
+  height: auto;
+  aspect-ratio: var(--ar, 1);
+  color: var(--c, rgb(var(--cyan-rgb)/60%));
+  opacity: var(--o, 0.7);
+  overflow: visible;
+  will-change: transform;
+}
+@media (max-width: 767.98px) {
+  .drift__obj--lg {
+    display: none;
+  }
+}
+.drift__img {
+  position: absolute;
+  display: block;
+  width: var(--w, 96px);
+  height: auto;
+  opacity: var(--o, 0.92);
+  filter: drop-shadow(0 0 18px var(--glow, rgb(var(--cyan-rgb)/22%)));
+  user-select: none;
+  will-change: transform;
+}
+@media (max-width: 767.98px) {
+  .drift__img--lg {
+    display: none;
+  }
+}
+.drift .planet {
+  left: calc(var(--w) * -1);
+  top: var(--y, 20%);
+  animation: planetDrift var(--dur, 220s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+.drift .meteor {
+  --w: clamp(150px, 22vw, 340px);
+  --o: 0.9;
+  --glow: rgb(255 255 255 / 30%);
+  --tilt: 20deg;
+  --flip: 1;
+  --mx: -135vw;
+  --my: 14vw;
+  right: -30%;
+  top: -28%;
+  opacity: 0;
+  animation: meteorPass var(--dur, 26s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform, opacity;
+}
+.drift .meteor--reverse {
+  --tilt: -20deg;
+  --flip: -1;
+  --mx: 135vw;
+  right: auto;
+  left: -30%;
+}
+.drift--belt .rock {
+  --c: rgb(255 255 255 / 55%);
+  top: var(--y);
+  left: -8%;
+  animation: driftAcross var(--dur, 120s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+.drift--belt .rock > * {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin var(--rot, 80s) linear infinite;
+}
+.drift--belt .dust {
+  --c: rgb(var(--cyan-rgb) / 70%);
+  top: var(--y);
+  left: -2%;
+  animation: driftAcross var(--dur, 140s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+.drift--belt .planet-mars {
+  --w: clamp(34px, 4vw, 56px);
+  --o: 0.85;
+  --glow: rgb(255 140 90 / 30%);
+  --y: 16%;
+  --dur: 200s;
+  --delay: -30s;
+  --static-x: 14%;
+}
+.drift--belt .planet-jupiter {
+  --w: clamp(72px, 10vw, 150px);
+  --glow: rgb(255 190 120 / 28%);
+  --y: 22%;
+  --dur: 260s;
+  --delay: -205s;
+  --static-x: 78%;
+}
+.drift--orbit .track {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 50%;
+  height: 0;
+  border-top: 1px dashed rgb(var(--cyan-rgb)/28%);
+  transform: rotate(-3.5deg);
+  transform-origin: center;
+}
+.drift--orbit .track::before, .drift--orbit .track::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgb(var(--cyan-rgb)/50%);
+  border-radius: 50%;
+}
+.drift--orbit .track::before {
+  left: 28%;
+}
+.drift--orbit .track::after {
+  left: 68%;
+}
+.drift--orbit .satellite {
+  --ar: 84 / 44;
+  --c: rgb(var(--cyan-rgb) / 80%);
+  --o: 0.9;
+  top: 50%;
+  left: -8%;
+  translate: 0 -50%;
+  transform-origin: center;
+  animation: orbitPass 64s linear infinite;
+  animation-delay: -14s;
+  filter: drop-shadow(0 0 10px rgb(var(--cyan-rgb)/45%));
+}
+.drift--orbit .satellite .beacon {
+  animation: blink 2.4s ease-in-out infinite;
+}
+.drift--orbit .probe {
+  --c: rgb(var(--magenta-rgb) / 70%);
+  --o: 0.65;
+  top: 12%;
+  right: 12%;
+  animation: floatY 9s ease-in-out infinite, spinSlow 70s linear infinite;
+}
+.drift--orbit .planet-earth {
+  --w: clamp(96px, 13vw, 190px);
+  --glow: rgb(var(--cyan-rgb) / 30%);
+  --y: 38%;
+  --dur: 280s;
+  --delay: -215s;
+  --static-x: 74%;
+}
+.drift--comet .atom {
+  --c: rgb(var(--violet-rgb) / 75%);
+  --o: 0.75;
+  left: clamp(24px, 9vw, 160px);
+  top: 24%;
+  animation: floatY 10s ease-in-out infinite;
+}
+.drift--comet .atom .orbit-a,
+.drift--comet .atom .orbit-b,
+.drift--comet .atom .orbit-c {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.drift--comet .atom .orbit-a {
+  animation: spin 24s linear infinite;
+}
+.drift--comet .atom .orbit-b {
+  animation: spin 30s linear infinite reverse;
+}
+.drift--comet .atom .orbit-c {
+  animation: spin 36s linear infinite;
+}
+.drift--comet .atom .nucleus {
+  animation: blink 3s ease-in-out infinite;
+}
+.drift--comet .astronaut {
+  --w: clamp(64px, 8vw, 118px);
+  --o: 0.95;
+  --glow: rgb(255 255 255 / 22%);
+  left: 50%;
+  top: 8%;
+  transform-origin: 50% 45%;
+  animation: astroDrift 18s ease-in-out infinite alternate;
+}
+.drift--comet .planet-neptune {
+  --w: clamp(44px, 5.5vw, 80px);
+  --o: 0.8;
+  --glow: rgb(var(--cyan-rgb) / 28%);
+  --y: 54%;
+  --dur: 240s;
+  --delay: -200s;
+  --static-x: 82%;
+}
+.drift--launch .trajectory {
+  position: absolute;
+  left: 8%;
+  bottom: -10%;
+  width: calc(var(--h) * 1.6);
+  height: calc(var(--h) * 1.3);
+  overflow: visible;
+  opacity: 0.8;
+}
+.drift--launch .trajectory path {
+  fill: none;
+  stroke: rgb(var(--magenta-rgb)/35%);
+  stroke-width: 1;
+  stroke-dasharray: 2 8;
+  stroke-linecap: round;
+}
+.drift--launch .rocket {
+  --ar: 40 / 80;
+  --c: rgb(255 255 255 / 90%);
+  --o: 0.95;
+  left: 8%;
+  bottom: -10%;
+  translate: -50% -50%;
+  animation: rocketRise 42s cubic-bezier(0.3, 0, 0.5, 1) infinite;
+  filter: drop-shadow(0 0 12px rgb(var(--magenta-rgb)/50%));
+}
+.drift--launch .rocket .flame {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: flameFlicker 0.5s ease-in-out infinite alternate;
+}
+.drift--launch .puff {
+  position: absolute;
+  left: 8%;
+  bottom: -10%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgb(var(--magenta-rgb)/50%);
+  filter: blur(2px);
+  animation: puffTrail 42s cubic-bezier(0.3, 0, 0.5, 1) infinite;
+  animation-delay: var(--delay, 0.6s);
+}
+.drift--launch .planet-saturn {
+  --w: clamp(120px, 15vw, 230px);
+  --glow: rgb(255 200 140 / 26%);
+  --y: 12%;
+  --dur: 300s;
+  --delay: -235s;
+  --static-x: 76%;
+}
+.drift--rays .horizon {
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  width: max(140vw, 1400px);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 0%, rgb(var(--cyan-rgb)/16%), rgb(var(--color-bg)/0%) 20%);
+  box-shadow: inset 0 1px 0 rgb(var(--cyan-rgb)/50%), 0 -1px 28px rgb(var(--cyan-rgb)/20%), 0 -10px 90px rgb(var(--violet-rgb)/16%);
+  animation: horizonBreathe 12s ease-in-out infinite;
+}
+.drift--rays .ray {
+  position: absolute;
+  left: var(--x, 30%);
+  top: -20%;
+  width: clamp(80px, 12vw, 180px);
+  height: 140%;
+  transform-origin: top center;
+  rotate: var(--r, -28deg);
+  background: linear-gradient(180deg, rgb(var(--cyan-rgb)/0%), rgb(var(--cyan-rgb)/12%) 40%, rgb(var(--violet-rgb)/0%));
+  mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 40%, #000 60%, transparent);
+  opacity: 0.8;
+  animation: rayBreathe var(--dur, 10s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: opacity, transform;
+}
+.drift--rays .gyro {
+  --c: rgb(var(--cyan-rgb) / 60%);
+  --o: 0.7;
+  left: clamp(24px, 8vw, 140px);
+  top: 18%;
+}
+.drift--rays .gyro .ring-1,
+.drift--rays .gyro .ring-2 {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.drift--rays .gyro .ring-1 {
+  animation: spin 40s linear infinite;
+}
+.drift--rays .gyro .ring-2 {
+  animation: spin 55s linear infinite reverse;
+}
+.drift--rays .planet-mercury {
+  --w: clamp(28px, 3.2vw, 46px);
+  --o: 0.85;
+  --glow: rgb(255 255 255 / 20%);
+  --y: 26%;
+  --dur: 190s;
+  --delay: -66s;
+  --static-x: 33%;
+}
+.drift--rays .planet-venus {
+  --w: clamp(40px, 4.6vw, 66px);
+  --o: 0.9;
+  --glow: rgb(255 210 150 / 30%);
+  --y: 14%;
+  --dur: 230s;
+  --delay: -150s;
+  --static-x: 64%;
+}
+.drift--rays .beacon-src {
+  position: absolute;
+  right: clamp(24px, 8vw, 140px);
+  top: 24%;
+  width: 14px;
+  height: 14px;
+}
+.drift--rays .beacon-src span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgb(var(--magenta-rgb)/70%);
+  animation: pulseRing 4s ease-out infinite;
+}
+.drift--rays .beacon-src span:nth-child(2) {
+  animation-delay: 1.3s;
+}
+.drift--rays .beacon-src span:nth-child(3) {
+  animation-delay: 2.6s;
+}
+.drift--fragments .fragment {
+  --c: rgb(255 255 255 / 50%);
+  --o: 0.6;
+  top: var(--y);
+  left: -6%;
+  animation: driftAcross var(--dur, 150s) linear infinite;
+  animation-delay: var(--delay, 0s);
+}
+.drift--fragments .fragment > * {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin var(--rot, 60s) linear infinite reverse;
+}
+.drift--fragments .planet-uranus {
+  --w: clamp(96px, 12vw, 180px);
+  --o: 0.72;
+  --glow: rgb(var(--cyan-rgb) / 26%);
+  --y: 16%;
+  --dur: 270s;
+  --delay: -40s;
+  --static-x: 12%;
+}
+
+.comet {
+  position: absolute;
+  top: var(--y, 30%);
+  left: -12%;
+  width: clamp(120px, 18vw, 260px);
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, rgb(var(--cyan-rgb)/35%) 55%, rgba(255, 255, 255, 0.95));
+  transform-origin: right center;
+  rotate: 6deg;
+  opacity: 0;
+  animation: cometPass var(--dur, 34s) linear infinite;
+  animation-delay: var(--delay, 0s);
+  will-change: transform, opacity;
+}
+.comet::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.8), 0 0 28px 8px rgb(var(--cyan-rgb)/45%);
+}
+.comet--small {
+  width: clamp(80px, 12vw, 160px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgb(var(--violet-rgb)/40%) 60%, rgba(255, 255, 255, 0.9));
+}
+.comet--small::after {
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.7), 0 0 20px 5px rgb(var(--violet-rgb)/45%);
+}
+
+@keyframes starDrift {
+  to {
+    transform: translateX(calc(var(--tile) * -1));
+  }
+}
+@keyframes starTwinkle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+@keyframes driftAcross {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(100vw + 20%));
+  }
+}
+@keyframes planetDrift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(100vw + 100%));
+  }
+}
+@keyframes spinSlow {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes orbitPass {
+  0% {
+    transform: translate(0, 4vw) rotate(-3.5deg);
+  }
+  50% {
+    transform: translate(calc(50vw + 8%), calc(0.5vw - 6px)) rotate(-3.5deg);
+  }
+  100% {
+    transform: translate(calc(100vw + 16%), -3vw) rotate(-3.5deg);
+  }
+}
+@keyframes meteorPass {
+  0% {
+    transform: translate(0, 0) rotate(var(--tilt)) scaleX(var(--flip));
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 0.9;
+  }
+  36% {
+    transform: translate(var(--mx), var(--my)) rotate(var(--tilt)) scaleX(var(--flip));
+    opacity: 0;
+  }
+  100% {
+    transform: translate(var(--mx), var(--my)) rotate(var(--tilt)) scaleX(var(--flip));
+    opacity: 0;
+  }
+}
+@keyframes astroDrift {
+  0% {
+    transform: translate(-50%, 0) rotate(-7deg);
+  }
+  50% {
+    transform: translate(calc(-50% + 18px), -14px) rotate(2deg);
+  }
+  100% {
+    transform: translate(calc(-50% - 10px), 6px) rotate(9deg);
+  }
+}
+@keyframes cometPass {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  34% {
+    opacity: 0.9;
+  }
+  40% {
+    transform: translate(calc(var(--span, 100vw) + 24%), var(--drop, 12vw));
+    opacity: 0;
+  }
+  100% {
+    transform: translate(calc(var(--span, 100vw) + 24%), var(--drop, 12vw));
+    opacity: 0;
+  }
+}
+@keyframes rocketRise {
+  0% {
+    transform: translate(0, 0) rotate(51deg);
+    opacity: 0;
+  }
+  4% {
+    opacity: 1;
+  }
+  52% {
+    opacity: 1;
+  }
+  58% {
+    transform: translate(calc(var(--h) * 1.6), calc(var(--h) * -1.3)) rotate(51deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(calc(var(--h) * 1.6), calc(var(--h) * -1.3)) rotate(51deg);
+    opacity: 0;
+  }
+}
+@keyframes puffTrail {
+  0% {
+    transform: translate(0, 0) scale(0.6);
+    opacity: 0;
+  }
+  4% {
+    opacity: 0.8;
+  }
+  30% {
+    opacity: 0.3;
+  }
+  58% {
+    transform: translate(calc(var(--h) * 1.6), calc(var(--h) * -1.3)) scale(2.4);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(calc(var(--h) * 1.6), calc(var(--h) * -1.3)) scale(2.4);
+    opacity: 0;
+  }
+}
+@keyframes flameFlicker {
+  from {
+    transform: scaleY(0.8);
+    opacity: 0.7;
+  }
+  to {
+    transform: scaleY(1.15);
+    opacity: 1;
+  }
+}
+@keyframes horizonBreathe {
+  0%, 100% {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-6px);
+  }
+}
+@keyframes rayBreathe {
+  0%, 100% {
+    opacity: 0.4;
+    transform: translateX(0);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateX(12px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drift__inner * {
+    animation: none !important;
+  }
+  .comet,
+  .drift .rocket,
+  .drift .puff,
+  .drift .meteor {
+    display: none;
+  }
+  .drift .astronaut {
+    transform: translate(-50%, 0) rotate(-7deg);
+  }
+  .drift .rock,
+  .drift .dust,
+  .drift .fragment,
+  .drift .satellite,
+  .drift .planet {
+    left: var(--static-x, 40%);
+  }
+}
+.worlds {
+  background: radial-gradient(ellipse 30% 24% at 100% 12%, rgb(var(--cyan-rgb)/9%), rgb(var(--cyan-rgb)/2%) 55%, transparent 100%);
+}
+
+.mission {
+  background: radial-gradient(ellipse 30% 24% at 0% 50%, rgb(var(--violet-rgb)/9%), rgb(var(--violet-rgb)/2%) 55%, transparent 100%);
+}
+
+.vote {
+  background: radial-gradient(ellipse 30% 24% at 100% 50%, rgb(var(--magenta-rgb)/6%), rgb(var(--magenta-rgb)/2%) 55%, transparent 100%);
+}
+
+.live {
+  --white-rgb: 255 255 255;
+  background: radial-gradient(ellipse 30% 24% at 0% 50%, rgb(var(--white-rgb)/5%), rgb(var(--white-rgb)/2%) 55%, transparent 100%);
+}
+
 .site {
   position: relative;
   min-height: 100svh;
@@ -2102,19 +2754,27 @@ html.lenis body {
     display: none;
   }
 }
+.theme > .container {
+  container-type: inline-size;
+}
+.theme__title {
+  --fit: calc(100cqw / 13.5);
+}
+@supports not (font-size: 1cqw) {
+  .theme__title {
+    --fit: calc((100vw - 2 * var(--container-gutter)) / 14.2);
+  }
+}
 .theme__title {
   margin: 0 0 clamp(32px, 5vw, 64px);
-  font-size: clamp(2.75rem, 0.5rem + 6vw, 6.5rem);
+  font-size: min(var(--fs-fluid-7xl), var(--fit));
   font-weight: var(--fw-black);
   line-height: 0.92;
   letter-spacing: -0.045em;
   text-transform: uppercase;
-  max-width: none;
 }
-@media (min-width: 768px) {
-  .theme__title .line {
-    white-space: nowrap;
-  }
+.theme__title .line {
+  white-space: nowrap;
 }
 .theme__row {
   display: flex;
@@ -3181,9 +3841,20 @@ html.lenis body {
 }
 .vote {
   overflow: hidden;
+  isolation: isolate;
 }
 .vote .section-head {
   max-width: 900px;
+}
+.vote__comets {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.vote__comets:not(.is-active) .comet {
+  animation-play-state: paused;
 }
 
 .orbit-poll {

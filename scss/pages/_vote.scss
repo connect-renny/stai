@@ -8,9 +8,25 @@
 
 .vote {
   overflow: hidden;
+  isolation: isolate; // keeps the comet layer's z-index -1 inside the section
 
   .section-head {
     max-width: 900px;
+  }
+
+  // Comets streak the full section width, passing behind the orbit poll and
+  // filling the open space either side of it (see components/_drift.scss
+  // for .comet). Paused while off-screen — main.js toggles .is-active.
+  &__comets {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+
+    &:not(.is-active) .comet {
+      animation-play-state: paused;
+    }
   }
 }
 

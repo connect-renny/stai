@@ -1,0 +1,38 @@
+@use "../abstracts" as *;
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  Edge glow — a small, light tint tucked against one edge of a section
+//
+//  One static background gradient on the section itself: no extra elements,
+//  no blur, no animation, so it costs nothing to scroll. Kept small (about a
+//  quarter of the section) and faint, one per placement, each in a different
+//  colour from the brief's palette (electric cyan · violet · white · a touch
+//  of magenta) so no two feel alike:
+//
+//    02 Worlds   top right     cyan
+//    04 Mission  left centre   violet
+//    06 Vote     right centre  magenta (highlight only — lightest of the set)
+//    08 Live     left centre   white
+// ═══════════════════════════════════════════════════════════════════════════
+
+@mixin edge-glow($rgb, $x, $y, $peak: 9%, $w: 30%, $h: 24%) {
+  background: radial-gradient(ellipse #{$w} #{$h} at #{$x} #{$y}, rgb(#{$rgb} / #{$peak}), rgb(#{$rgb} / 2%) 55%, transparent 100%);
+}
+
+.worlds {
+  @include edge-glow(var(--cyan-rgb), 100%, 12%);
+}
+
+.mission {
+  @include edge-glow(var(--violet-rgb), 0%, 50%);
+}
+
+.vote {
+  @include edge-glow(var(--magenta-rgb), 100%, 50%, 6%);
+}
+
+.live {
+  --white-rgb: 255 255 255;
+
+  @include edge-glow(var(--white-rgb), 0%, 50%, 5%);
+}

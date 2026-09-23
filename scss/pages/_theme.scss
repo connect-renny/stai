@@ -77,14 +77,31 @@
     }
   }
 
+  // The title measures its room with container-query units
+  > .container {
+    container-type: inline-size;
+  }
+
   &__title {
+    // Each line stays on one row. "NOT ONE THING." measures ≈ 13.3em in
+    // Syne black, so cap the size at what the container's content box can
+    // hold and let the fluid size win whenever there's room.
+    --fit: calc(100cqw / 13.5);
+
+    @supports not (font-size: 1cqw) {
+      --fit: calc((100vw - 2 * var(--container-gutter)) / 14.2);
+    }
+
     margin: 0 0 clamp(32px, 5vw, 64px);
-    font-size: var(--fs-fluid-7xl);
+    font-size: min(var(--fs-fluid-7xl), var(--fit));
     font-weight: var(--fw-black);
     line-height: 0.92;
     letter-spacing: -0.045em;
     text-transform: uppercase;
-    max-width: 14ch;
+
+    .line {
+      white-space: nowrap;
+    }
   }
 
   &__row {

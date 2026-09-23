@@ -239,6 +239,25 @@ body.is-gated {
 
     &-sep {
       color: var(--color-text-dim);
+
+      // Below sm the trio drops to its own line, so the dot would dangle
+      @include mq-down("sm") {
+        display: none;
+      }
+    }
+
+    // "Science • Technology • Innovation" wraps as one unit — never a lone
+    // word on its own line.
+    &-set {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+
+      @include mq-down("sm") {
+        letter-spacing: 0.22em;
+        gap: 8px;
+      }
     }
   }
 
