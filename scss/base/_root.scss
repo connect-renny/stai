@@ -20,6 +20,17 @@
   --magenta: #ff6ad5;
   --magenta-rgb: 255 106 213;
 
+  // Fluorescent inks for small text (client request: bright, readable HUD text).
+  --neon-green: #39ff14;
+  --neon-green-rgb: 57 255 20;
+  --neon-cyan: #2ef2ff;
+  --neon-cyan-rgb: 46 242 255;
+  --neon-magenta: #ff4fd8;
+  --neon-magenta-rgb: 255 79 216;
+  --glow-text-cyan: 0 0 12px rgb(var(--neon-cyan-rgb) / 45%);
+  --glow-text-green: 0 0 12px rgb(var(--neon-green-rgb) / 35%);
+  --glow-text-magenta: 0 0 12px rgb(var(--neon-magenta-rgb) / 45%);
+
   --color-brand: var(--cyan);
   --color-brand-rgb: var(--cyan-rgb);
   --color-accent: var(--violet);

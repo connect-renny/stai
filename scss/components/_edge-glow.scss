@@ -30,9 +30,3 @@
 .vote {
   @include edge-glow(var(--magenta-rgb), 100%, 50%, 6%);
 }
-
-.live {
-  --white-rgb: 255 255 255;
-
-  @include edge-glow(var(--white-rgb), 0%, 50%, 5%);
-}

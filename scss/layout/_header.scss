@@ -113,14 +113,19 @@
   }
 
   &__year {
-    color: var(--cyan);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--neon-cyan);
+    text-shadow: var(--glow-text-cyan);
   }
 
   &__line {
-    font-size: 0.6rem;
+    font-size: 0.72rem;
+    font-weight: var(--fw-semibold);
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--neon-green);
+    text-shadow: var(--glow-text-green);
     white-space: nowrap;
 
     @include mq-down("sm") {
@@ -145,14 +150,15 @@
     align-items: baseline;
     gap: 6px;
     padding: 10px 11px;
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-medium);
-    color: var(--color-text-muted);
+    font-size: 0.95rem;
+    font-weight: var(--fw-semibold);
+    color: var(--color-text);
     letter-spacing: 0.01em;
 
     .mono {
-      font-size: 0.6rem;
-      color: var(--color-text-dim);
+      font-size: 0.7rem;
+      font-weight: var(--fw-bold);
+      color: var(--neon-magenta);
       transition: color 0.3s ease;
     }
 
@@ -170,10 +176,10 @@
     }
 
     @include hover {
-      color: var(--color-heading);
+      color: var(--neon-cyan);
 
       .mono {
-        color: var(--cyan);
+        color: var(--neon-cyan);
       }
 
       &::after {
@@ -183,10 +189,11 @@
     }
 
     &.is-active {
-      color: var(--color-heading);
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-text-cyan);
 
       .mono {
-        color: var(--cyan);
+        color: var(--neon-cyan);
       }
 
       &::after {

@@ -34,8 +34,11 @@
   }
 
   &__meta {
-    margin-top: 12px;
-    color: var(--color-text-dim);
+    margin-top: 14px;
+    font-size: var(--fs-base);
+    font-weight: var(--fw-bold);
+    color: var(--neon-green);
+    text-shadow: var(--glow-text-green);
   }
 }
 
@@ -92,7 +95,15 @@
   }
 
   &__label {
-    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--neon-cyan);
+    text-shadow: var(--glow-text-cyan);
+
+    @include mq-down("sm") {
+      font-size: 0.7rem;
+      letter-spacing: 0.04em;
+    }
   }
 
   &__sep {

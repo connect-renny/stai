@@ -32,6 +32,19 @@ section {
     justify-content: center;
     display: flex;
   }
+
+  // Fluorescent variant — bigger, brighter HUD text (client readability pass).
+  &--neon {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--neon-green);
+    text-shadow: var(--glow-text-green);
+
+    .label__num {
+      color: var(--neon-cyan);
+      text-shadow: var(--glow-text-cyan);
+    }
+  }
 }
 
 .section-head {

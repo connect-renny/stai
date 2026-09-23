@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Resources — STAI 2026 Future World</title>
+    <meta
+      name="description"
+      content="STAI 2026 resource hub — blogs, vlogs, photos, shorts, reels, podcasts, webinars and more for every world and zone."
+    />
+    <meta name="theme-color" content="#060913" />
+
+    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@500;600;700;800&family=Manrope:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css" />
+    <!-- style.css last — it owns the tokens everything above is themed with. -->
+    <link rel="stylesheet" href="assets/css/style.css?v=20260923f" />
+
+    <script>
+      document.documentElement.classList.replace("no-js", "js");
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- Global atmosphere: grain + faint grid -->
+    <div class="atmos" aria-hidden="true">
+      <div class="atmos__grid"></div>
+      <div class="atmos__grain"></div>
+    </div>
+
+    <!-- Custom cursor (desktop, fine pointer only) -->
+    <div class="cursor" aria-hidden="true">
+      <div class="cursor__dot"></div>
+      <div class="cursor__ring"></div>
+    </div>
+
+    <div class="site" id="site">
+      <!-- Header -->
+      <header class="header" id="header">
+        <div class="header__inner">
+          <a class="brand" href="index.html?skip" aria-label="STAI 2026 home">
+            <span class="brand__mark">STAI</span>
+            <span class="brand__meta">
+              <span class="brand__year mono">2026</span>
+              <span class="brand__line">Science · Technology · Innovation</span>
+            </span>
+          </a>
+
+          <nav class="nav" aria-label="Primary">
+            <a href="index.html?skip#worlds" class="nav__link"><span class="mono">01</span>Worlds</a>
+            <a href="index.html?skip#lab" class="nav__link"><span class="mono">02</span>Future Lab</a>
+            <a href="index.html?skip#mission" class="nav__link"><span class="mono">03</span>Mission</a>
+            <a href="index.html?skip#makers" class="nav__link"><span class="mono">04</span>Makers</a>
+            <a href="index.html?skip#vote" class="nav__link"><span class="mono">05</span>Vote</a>
+            <a href="index.html?skip#countdown" class="nav__link"><span class="mono">06</span>Countdown</a>
+          </nav>
+
+          <div class="header__actions">
+            <!-- <a href="index.html?skip#register" class="btn btn--ghost btn--sm" data-cursor="hover">
+              <span>Register</span><i class="bi bi-arrow-up-right"></i>
+            </a> -->
+            <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+              <span></span><span></span>
+            </button>
+          </div>
+        </div>
+        <div class="header__progress" id="scrollProgress" aria-hidden="true"></div>
+      </header>
+
+      <!-- Mobile drawer -->
+      <div class="drawer" id="drawer" aria-hidden="true">
+        <button class="drawer__close" id="drawerClose" type="button" aria-label="Close menu" data-cursor="hover">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="drawer__inner">
+          <p class="mono drawer__kicker">STAI 2026 — Navigation</p>
+          <nav class="drawer__nav" aria-label="Mobile">
+            <a href="index.html?skip#worlds"><span class="mono">01</span>Worlds</a>
+            <a href="index.html?skip#lab"><span class="mono">02</span>Future Lab</a>
+            <a href="index.html?skip#mission"><span class="mono">03</span>Mission Control</a>
+            <a href="index.html?skip#makers"><span class="mono">04</span>Future Makers</a>
+            <a href="index.html?skip#vote"><span class="mono">05</span>Build the Future</a>
+            <a href="index.html?skip#countdown"><span class="mono">06</span>Countdown</a>
+          </nav>
+          <a href="index.html?skip#register" class="btn btn--primary drawer__cta">
+            <span>Register</span><i class="bi bi-arrow-up-right"></i>
+          </a>
+        </div>
+      </div>
+
+      <main id="main">
+        <span id="top"></span>
+
+        <section class="resources" id="resources" aria-labelledby="resTitle">
+          <div class="container">
+            <div class="resources__head">
+              <a href="index.html?skip#worlds" class="resources__back" data-cursor="hover"><i class="bi bi-arrow-left"></i>Back to Future World</a>
+              <p class="label label--neon mono" data-reveal="fade">
+                <span class="label__num">STAI</span>
+                <span class="label__line"></span>
+                <span>Resource hub</span>
+              </p>
+              <h1 class="resources__title" id="resTitle" data-reveal>
+                <span class="resources__title-icon" aria-hidden="true"><i class="bi bi-cpu" id="resTopicIcon"></i></span>
+                <span>Explore <span class="grad" id="resTopicName">Artificial Intelligence</span></span>
+              </h1>
+              <p class="resources__q" id="resTopicQ" data-reveal style="--reveal-delay: 100ms"></p>
+            </div>
+
+            <div class="res-topics" id="resTopics" role="group" aria-label="Choose a topic"></div>
+
+            <div class="res-tabs" id="resTabs" role="tablist" aria-label="Resource type"></div>
+
+            <div class="res-panel" id="resPanel" role="tabpanel" tabindex="0"></div>
+
+            <div class="resources__foot">
+              <a href="index.html?skip#lab" class="btn btn--ghost btn--lg" data-cursor="hover">
+                <span>Visit the Future Lab</span><i class="bi bi-arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer__inner">
+          <p class="footer__copy mono">© 2026 Indian School Al Wadi Al Kabir — STAI Future World</p>
+          <nav class="footer__nav" aria-label="Footer">
+            <a href="index.html?skip#worlds">Worlds</a>
+            <a href="index.html?skip#lab">Future Lab</a>
+            <a href="index.html?skip#mission">Mission</a>
+            <a href="index.html?skip#countdown">Countdown</a>
+          </nav>
+          <div class="footer__social">
+            <a href="#" aria-label="X" data-cursor="hover"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" aria-label="Facebook" data-cursor="hover"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="LinkedIn" data-cursor="hover"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="Instagram" data-cursor="hover"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="YouTube" data-cursor="hover"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+      </footer>
+
+      <button class="return-top" id="returnTop" type="button" aria-label="Back to top">
+        <i class="bi bi-arrow-up"></i>
+      </button>
+    </div>
+
+    <script src="assets/js/lenis.min.js" defer></script>
+    <!-- Resource entries first — main.js reads window.STAI_RESOURCES at init. -->
+    <script src="assets/js/resources-data.js?v=20260923f" defer></script>
+    <script src="assets/js/main.js?v=20260923f" defer></script>
+  </body>
+</html>

@@ -177,6 +177,36 @@
     line-height: 1.55;
   }
 
+  // Link into the resource hub (resources.html?topic=…)
+  &__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    padding: 10px 16px;
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--accent) 10%, rgb(6 9 19 / 70%));
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--accent);
+    text-shadow: 0 0 10px color-mix(in srgb, var(--accent) 45%, transparent);
+
+    i {
+      transition: transform 0.3s var(--ease-expo);
+    }
+
+    @include hover {
+      color: var(--color-bg);
+      text-shadow: none;
+      background: var(--accent);
+
+      i {
+        transform: translateX(4px);
+      }
+    }
+  }
+
   // Hover glow on any viewport
   @include hover {
     border-color: color-mix(in srgb, var(--accent) 45%, transparent);
@@ -251,6 +281,7 @@
     &__body {
       opacity: 0;
       transform: translateY(20px);
+      pointer-events: none; // hidden body must not swallow clicks on its link
       transition:
         opacity 0.4s ease,
         transform 0.5s var(--ease-out);
@@ -301,6 +332,7 @@
       .panel__body {
         opacity: 1;
         transform: none;
+        pointer-events: auto;
         transition-delay: 0.25s;
       }
     }

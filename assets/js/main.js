@@ -4,7 +4,7 @@
 
    Boot order (see App.init at the bottom):
      cursor → reveal → gate → preloader → clocks → header/drawer → panels →
-     lab → counters → makers → poll → countdown → live → outroField → drift → returnTop
+     lab → counters → makers → poll → countdown → resources → outroField → drift → returnTop
    The preloader holds the gate (title reveal + video) until it lifts;
    Lenis smooth scroll starts only once the gate has opened.
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -22,9 +22,7 @@
   const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
   // Event constants — one place to change when the date or venue moves.
-  const EVENT_START = new Date(2026, 9, 15, 9, 0, 0); // 15 Oct 2026, 09:00 local
-  const EVENT_DAY_START = new Date(2026, 9, 15, 0, 0, 0);
-  const EVENT_DAY_END = new Date(2026, 9, 16, 0, 0, 0);
+  const EVENT_START = new Date(2026, 9, 23, 9, 0, 0); // 23 Oct 2026, 09:00 local
 
   const App = {};
   let lenis = null;
@@ -79,7 +77,16 @@
     const canvas = $("#gateCanvas");
     const video = $("#gateVideo");
     const enterBtn = $("#enterBtn");
-    if (!gate || !site) return;
+    // Inner pages (resources.html) have no gate — open the site straight away.
+    if (!gate) {
+      if (site) {
+        site.classList.add("is-live");
+        App.startScroll();
+        App.reveal.refresh();
+      }
+      return;
+    }
+    if (!site) return;
 
     // ── Landing video ──
     // Respect reduced motion: hold on the first frame instead of looping.
@@ -452,6 +459,10 @@
       document.body.classList.remove("is-gated");
       cancelAnimationFrame(raf);
       video?.pause();
+      // Honour a deep link like index.html?skip#worlds — the gate blocked the
+      // browser's own jump. Jump before Lenis starts so it picks up from there.
+      const target = location.hash.length > 1 ? $(location.hash) : null;
+      if (target) window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 60, behavior: "instant" });
       App.startScroll();
       App.reveal.refresh();
     }
@@ -612,8 +623,12 @@
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
 
-    // Active section → nav link
-    const map = new Map(links.map((l) => [l.getAttribute("href").slice(1), l]));
+    // Active section → nav link (in-page links only; inner pages link back to index.html#…)
+    const map = new Map(
+      links
+        .filter((l) => l.getAttribute("href").startsWith("#"))
+        .map((l) => [l.getAttribute("href").slice(1), l])
+    );
     const io = new IntersectionObserver((entries) => {
       entries.forEach((en) => {
         if (!en.isIntersecting) return;
@@ -629,8 +644,10 @@
     init() {
       this.el = $("#drawer");
       this.btn = $("#burger");
+      this.closeBtn = $("#drawerClose");
       if (!this.el || !this.btn) return;
       this.btn.addEventListener("click", () => (this.isOpen ? this.close() : this.open()));
+      this.closeBtn?.addEventListener("click", () => this.close());
       window.addEventListener("keydown", (e) => e.key === "Escape" && this.close());
     },
     open() {
@@ -639,6 +656,7 @@
       this.el.setAttribute("aria-hidden", "false");
       this.btn.setAttribute("aria-expanded", "true");
       lenis?.stop();
+      this.closeBtn?.focus({ preventScroll: true });
     },
     close() {
       if (!this.isOpen) return;
@@ -647,6 +665,8 @@
       this.el.setAttribute("aria-hidden", "true");
       this.btn.setAttribute("aria-expanded", "false");
       lenis?.start();
+      // Hand focus back to the burger if it was inside the drawer
+      if (this.el.contains(document.activeElement)) this.btn.focus({ preventScroll: true });
     },
   };
 
@@ -882,56 +902,221 @@
     setInterval(tick, 1000);
   };
 
-  /* ─── On the day: scheduled ↔ live dashboard ─────────────────────────── */
-  App.live = () => {
-    const dash = $("#dash");
-    if (!dash) return;
-    const title = $("#liveTitle");
-    const body = $("#liveBody");
-    const tagText = $("#liveTagText");
-    const tag = $("#liveTag");
-    const nowLabel = $("#nowLabel");
-    const resultMain = $("#resultMain span");
-    const resultSub = $("#resultSub");
-    const boardNote = $("#boardNote");
-    const toggle = $("#liveToggle");
-    const cdNote = $("#cdNote");
+  /* ─── Resource hub (resources.html): topic chips + type tabs ─────────── */
+  // Real entries come from window.STAI_RESOURCES (assets/js/resources-data.js);
+  // any topic + type without entries shows styled placeholders instead.
+  // State lives in the URL: resources.html?topic=energy&type=vlogs
+  App.resources = () => {
+    const root = $("#resources");
+    if (!root) return;
 
-    const now = new Date();
-    const isEventDay = now >= EVENT_DAY_START && now < EVENT_DAY_END;
-    const forced = new URLSearchParams(location.search).has("live");
-    let live = isEventDay || forced;
+    const TOPICS = [
+      { id: "ai", name: "Artificial Intelligence", icon: "bi-cpu", accent: "#5ef2ff", q: "How will intelligent machines change the way we live?" },
+      { id: "biotechnology", name: "Biotechnology", icon: "bi-activity", accent: "#4dffc3", q: "Can science change the future of human health?" },
+      { id: "climate", name: "Climate", icon: "bi-cloud-sun", accent: "#7dff8a", q: "Can technology help us build a sustainable planet?" },
+      { id: "design-media", name: "Design & Media", icon: "bi-palette", accent: "#ff6ad5", q: "Tell the story of the future — film, design, games and visual worlds." },
+      { id: "energy", name: "Energy", icon: "bi-lightning-charge", accent: "#ffd166", q: "How will we power tomorrow's world?" },
+      { id: "healthcare", name: "Healthcare", icon: "bi-heart-pulse", accent: "#ff4d6d", q: "Design the diagnostics, devices and care ideas that keep people well." },
+      { id: "nature", name: "Nature", icon: "bi-flower1", accent: "#a8ff60", q: "Explore ecosystems, wildlife and biodiversity — and the ideas that keep them thriving." },
+      { id: "robotics", name: "Robotics", icon: "bi-robot", accent: "#2ef2ff", q: "Design, build and battle-test machines built for real problems." },
+      { id: "science", name: "Science", icon: "bi-flask", accent: "#4dffc3", q: "Experiment, discover, and prove your hypothesis on the day." },
+      { id: "smart-cities", name: "Smart Cities", icon: "bi-buildings", accent: "#ff6ad5", q: "What will the cities of the future look like?" },
+      { id: "space", name: "Space", icon: "bi-rocket-takeoff", accent: "#9d7bff", q: "What happens when humanity goes beyond Earth?" },
+      { id: "sustainability", name: "Sustainability", icon: "bi-leaf", accent: "#7dff8a", q: "Solve for the planet — energy, water, waste and the way we live." },
+      { id: "tech-innovation", name: "Tech Innovation", icon: "bi-motherboard", accent: "#ffd166", q: "Prototype the product, app or gadget the world doesn't know it needs yet." },
+    ];
 
-    const render = () => {
-      dash.classList.toggle("is-live", live);
-      if (live) {
-        title.innerHTML = 'The future is <span class="grad">happening now.</span>';
-        body.textContent = "STAI 2026 is live. Announcements, results and the leaderboard are updating in real time below.";
-        tagText.textContent = "STAI 2026 — Live";
-        tag.querySelector(".pulse")?.classList.add("pulse--red");
-        nowLabel.textContent = "Happening now";
-        resultMain.textContent = "Team Nova — Robotics";
-        resultSub.textContent = "Robotics Challenge · Final round";
-        boardNote.textContent = "Updated moments ago · scores refresh live.";
-        if (toggle) toggle.textContent = "Back to scheduled view";
-        if (cdNote && EVENT_START - now <= 0) cdNote.textContent = "The future is happening now.";
-      } else {
-        title.innerHTML = 'Prepare <span class="grad">for the future.</span>';
-        body.textContent = "Before STAI, this space holds the schedule. The moment the festival opens, it becomes a live dashboard — announcements, results and the leaderboard, updated in real time.";
-        tagText.textContent = "STAI 2026 — Scheduled";
-        tag.querySelector(".pulse")?.classList.remove("pulse--red");
-        nowLabel.textContent = "First up";
-        resultMain.textContent = "Opens on event day";
-        resultSub.textContent = "Live results, team by team";
-        boardNote.textContent = "Scores unlock when the festival opens.";
-        if (toggle) toggle.textContent = "Preview live mode";
+    // layout picks the placeholder card shape; n is how many placeholders to show.
+    const TYPES = [
+      { id: "blogs", label: "Blogs", one: "Blog", icon: "bi-journal-text", layout: "article", n: 8, meta: "5 min read" },
+      { id: "vlogs", label: "Vlogs", one: "Vlog", icon: "bi-camera-video", layout: "video", n: 8, meta: "--:--" },
+      { id: "photos", label: "Photos", one: "Photo", icon: "bi-images", layout: "photo", n: 9 },
+      { id: "video-clips", label: "Video Clips", one: "Video clip", icon: "bi-film", layout: "video", n: 8, meta: "--:--" },
+      { id: "shorts", label: "Shorts", one: "Short", icon: "bi-phone", layout: "vertical", n: 12 },
+      { id: "reels", label: "Reels", one: "Reel", icon: "bi-collection-play", layout: "vertical", n: 12 },
+      { id: "infographics", label: "Infographics", one: "Infographic", icon: "bi-bar-chart-line", layout: "info", n: 10 },
+      { id: "podcasts", label: "Podcasts", one: "Episode", icon: "bi-mic", layout: "audio", n: 6, meta: "--:--" },
+      { id: "webinars", label: "Webinars", one: "Webinar", icon: "bi-person-video3", layout: "video", n: 4, meta: "Date TBA" },
+      { id: "interactive", label: "Interactive", one: "Interactive", icon: "bi-joystick", layout: "interactive", n: 4 },
+    ];
+
+    const DATA = Array.isArray(window.STAI_RESOURCES) ? window.STAI_RESOURCES : [];
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+    const safeUrl = (u) => (/^(https?:|mailto:|\/|\.{0,2}\/|[\w-]+\.html)/i.test(String(u || "")) ? String(u) : "#");
+
+    const chipsEl = $("#resTopics", root);
+    const tabsEl = $("#resTabs", root);
+    const panelEl = $("#resPanel", root);
+    const nameEl = $("#resTopicName", root);
+    const qEl = $("#resTopicQ", root);
+    const iconEl = $("#resTopicIcon", root);
+
+    const params = new URLSearchParams(location.search);
+    let topic = TOPICS.find((t) => t.id === params.get("topic")) || TOPICS[0];
+    let type = TYPES.find((t) => t.id === params.get("type")) || TYPES[0];
+
+    const itemsFor = (tp, ty) => DATA.filter((d) => d.topic === tp.id && d.type === ty.id);
+
+    // Centre the active chip/tab inside its own swipeable row (phones) without moving the page
+    const reveal = (row) => {
+      const b = $(".is-active", row);
+      if (!b || row.scrollWidth <= row.clientWidth) return;
+      const off = b.getBoundingClientRect().left - row.getBoundingClientRect().left;
+      row.scrollLeft += off - (row.clientWidth - b.offsetWidth) / 2;
+    };
+
+    // Deterministic pseudo-random heights so placeholders don't jump on re-render
+    const wave = (seed, count, min, max) =>
+      Array.from({ length: count }, (_, i) => {
+        const x = Math.sin(seed * 9.1 + i * 2.3) * 43758.5453;
+        return Math.round(min + (x - Math.floor(x)) * (max - min));
+      });
+
+    // ── Card templates ──
+    const media = (inner, item) =>
+      item?.thumb
+        ? `<div class="res-card__media has-img"><img src="${esc(item.thumb)}" alt="" loading="lazy" decoding="async" />${inner}</div>`
+        : `<div class="res-card__media">${inner}</div>`;
+
+    const card = (ty, i, item) => {
+      const num = pad(i + 1);
+      const title = item ? esc(item.title) : `${esc(topic.name)} ${ty.one.toLowerCase()} ${num}`;
+      const meta = esc(item?.meta ?? ty.meta ?? "");
+      const soon = item ? "" : `<span class="res-card__badge mono">Coming soon</span>`;
+      const tag = item ? "a" : "article";
+      const attrs = item
+        ? `href="${esc(safeUrl(item.url))}" target="_blank" rel="noopener" data-cursor="hover"`
+        : `aria-label="${title} — coming soon"`;
+      const cls = `res-card res-card--${ty.layout}${item ? "" : " is-placeholder"}`;
+      const style = `style="--i: ${i}"`;
+      const lines = item ? "" : `<span class="res-card__line"></span><span class="res-card__line res-card__line--short"></span>`;
+
+      switch (ty.layout) {
+        case "video":
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            ${media(`<span class="res-card__play"><i class="bi bi-play-fill"></i></span>${soon}${meta ? `<span class="res-card__dur mono">${meta}</span>` : ""}`, item)}
+            <div class="res-card__body"><p class="res-card__kicker mono"><i class="bi ${ty.icon}"></i>${ty.one} · ${num}</p><h3 class="res-card__title">${title}</h3>${lines}</div>
+          </${tag}>`;
+        case "vertical":
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            ${media(`${soon}<span class="res-card__play"><i class="bi bi-play-fill"></i></span>
+              <span class="res-card__rail" aria-hidden="true"><i class="bi bi-heart"></i><i class="bi bi-chat"></i><i class="bi bi-send"></i></span>
+              <span class="res-card__caption"><b>${title}</b><span class="res-card__progress"><i></i></span></span>`, item)}
+          </${tag}>`;
+        case "photo":
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            ${media(`<span class="res-card__glyph"><i class="bi bi-image"></i></span>${soon}<span class="res-card__caption"><b>${title}</b></span>`, item)}
+          </${tag}>`;
+        case "info": {
+          const bars = wave(i + 1, 5, 25, 95).map((h) => `<i style="--h: ${h}%"></i>`).join("");
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            ${media(`${soon}<span class="res-card__chart" aria-hidden="true">${bars}</span><span class="res-card__ring" aria-hidden="true"></span>`, item)}
+            <div class="res-card__body"><p class="res-card__kicker mono"><i class="bi ${ty.icon}"></i>${ty.one} · ${num}</p><h3 class="res-card__title">${title}</h3></div>
+          </${tag}>`;
+        }
+        case "audio": {
+          const bars = wave(i + 3, 36, 18, 100).map((h) => `<i style="--h: ${h}%"></i>`).join("");
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            <div class="res-card__cover"><i class="bi bi-mic"></i></div>
+            <div class="res-card__body">
+              <p class="res-card__kicker mono">${ty.one} ${num}${item ? "" : " · Coming soon"}</p>
+              <h3 class="res-card__title">${title}</h3>
+              <div class="res-card__player"><span class="res-card__play res-card__play--sm"><i class="bi bi-play-fill"></i></span><span class="res-card__wave" aria-hidden="true">${bars}</span><span class="res-card__dur mono">${meta}</span></div>
+            </div>
+          </${tag}>`;
+        }
+        case "interactive":
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            ${media(`<span class="res-card__glyph"><i class="bi ${ty.icon}"></i></span>${soon}<span class="res-card__orbit" aria-hidden="true"><span></span><span></span></span>`, item)}
+            <div class="res-card__body"><p class="res-card__kicker mono"><i class="bi bi-hand-index-thumb"></i>Hands-on · ${num}</p><h3 class="res-card__title">${title}</h3>${lines}<span class="res-card__launch mono">${item ? "Launch" : "Launching soon"} <i class="bi bi-box-arrow-up-right"></i></span></div>
+          </${tag}>`;
+        default: // article
+          return `<${tag} class="${cls}" ${style} ${attrs}>
+            ${media(`<span class="res-card__glyph"><i class="bi ${ty.icon}"></i></span>${soon}`, item)}
+            <div class="res-card__body"><p class="res-card__kicker mono"><i class="bi bi-clock"></i>${meta}</p><h3 class="res-card__title">${title}</h3>${lines}</div>
+          </${tag}>`;
       }
     };
 
-    toggle?.addEventListener("click", () => { live = !live; render(); });
-    // Hide the preview toggle on the real day — there's nothing to preview.
-    if (isEventDay && toggle) toggle.hidden = true;
-    render();
+    // ── Renderers ──
+    const renderTopics = () => {
+      chipsEl.innerHTML = TOPICS.map(
+        (t) => `<button type="button" class="res-chip${t === topic ? " is-active" : ""}" style="--accent: ${t.accent}" data-topic="${t.id}" aria-pressed="${t === topic}" data-cursor="hover">
+          <i class="bi ${t.icon}"></i><span>${esc(t.name)}</span></button>`
+      ).join("");
+      reveal(chipsEl);
+    };
+
+    const renderTabs = () => {
+      tabsEl.innerHTML = TYPES.map((t) => {
+        const on = t === type;
+        const count = itemsFor(topic, t).length;
+        return `<button type="button" role="tab" class="res-tab${on ? " is-active" : ""}" id="tab-${t.id}" data-type="${t.id}"
+          aria-selected="${on}" aria-controls="resPanel" tabindex="${on ? 0 : -1}" data-cursor="hover">
+          <i class="bi ${t.icon}"></i><span>${t.label}</span>${count ? `<b class="mono">${count}</b>` : ""}</button>`;
+      }).join("");
+      reveal(tabsEl);
+    };
+
+    const renderPanel = () => {
+      const items = itemsFor(topic, type);
+      const list = items.length ? items : Array.from({ length: type.n }, () => null);
+      panelEl.setAttribute("aria-labelledby", `tab-${type.id}`);
+      panelEl.innerHTML = `<div class="res-grid res-grid--${type.layout}">${list.map((it, i) => card(type, i, it)).join("")}</div>`;
+      // restart the stagger-in
+      panelEl.classList.remove("is-in");
+      void panelEl.offsetWidth;
+      panelEl.classList.add("is-in");
+    };
+
+    const renderHead = () => {
+      root.style.setProperty("--accent", topic.accent);
+      nameEl.textContent = topic.name;
+      qEl.textContent = topic.q;
+      iconEl.className = `bi ${topic.icon}`;
+      document.title = `${topic.name} · ${type.label} — STAI 2026 Resources`;
+    };
+
+    const sync = () => {
+      const url = new URL(location.href);
+      url.searchParams.set("topic", topic.id);
+      url.searchParams.set("type", type.id);
+      history.replaceState(null, "", url);
+    };
+
+    const renderAll = () => { renderHead(); renderTopics(); renderTabs(); renderPanel(); sync(); };
+
+    chipsEl.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-topic]");
+      if (!b) return;
+      topic = TOPICS.find((t) => t.id === b.dataset.topic) || topic;
+      renderAll();
+      $(`[data-topic="${topic.id}"]`, chipsEl)?.focus({ preventScroll: true });
+    });
+
+    const selectType = (t, focus) => {
+      type = t;
+      renderHead(); renderTabs(); renderPanel(); sync();
+      if (focus) $(`#tab-${t.id}`, tabsEl)?.focus({ preventScroll: true });
+    };
+
+    tabsEl.addEventListener("click", (e) => {
+      const b = e.target.closest("[data-type]");
+      if (b) selectType(TYPES.find((t) => t.id === b.dataset.type) || type, true);
+    });
+
+    // Arrow keys / Home / End move between tabs (WAI-ARIA tabs pattern)
+    tabsEl.addEventListener("keydown", (e) => {
+      const i = TYPES.indexOf(type);
+      const next = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: TYPES.length - 1 }[e.key];
+      if (next === undefined) return;
+      e.preventDefault();
+      selectType(TYPES[(next + TYPES.length) % TYPES.length], true);
+    });
+
+    renderAll();
+    // Web fonts change chip/tab widths — re-centre once they're in.
+    document.fonts?.ready.then(() => { reveal(chipsEl); reveal(tabsEl); });
   };
 
   /* ─── Outro star field ───────────────────────────────────────────────── */
@@ -1016,7 +1201,7 @@
     App.makers();
     App.poll();
     App.countdown();
-    App.live();
+    App.resources();
     App.outroField();
     App.drift();
     App.returnTop();

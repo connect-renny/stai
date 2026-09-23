@@ -25,6 +25,32 @@
     transition-delay: 0s;
   }
 
+  // Sits exactly where the burger is, so open/close stay under the same thumb
+  &__close {
+    position: absolute;
+    top: calc((var(--header-height) - 44px) / 2);
+    right: var(--container-gutter);
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-circle);
+    background: var(--color-surface);
+    font-size: 1.1rem;
+    color: var(--color-heading);
+    transition:
+      transform 0.5s var(--ease-expo),
+      border-color 0.3s ease,
+      color 0.3s ease;
+
+    @include hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      transform: rotate(90deg);
+    }
+  }
+
   &__inner {
     width: 100%;
     max-width: 520px;

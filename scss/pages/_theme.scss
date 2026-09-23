@@ -70,7 +70,10 @@
   }
 
   &__aside {
-    color: var(--color-text-dim);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-semibold);
+    color: var(--neon-magenta);
+    text-shadow: var(--glow-text-magenta);
 
     @include mq-down("md") {
       display: none;
@@ -120,16 +123,17 @@
 
   &__body {
     max-width: 52ch;
-    font-size: var(--fs-fluid-lg);
-    font-weight: var(--fw-light);
-    line-height: 1.7;
-    color: var(--color-text-muted);
+    font-size: #{fluid(18, 23)};
+    font-weight: var(--fw-normal);
+    line-height: 1.65;
+    color: var(--color-heading);
 
     strong {
       display: block;
       margin-top: 0.8em;
-      font-weight: var(--fw-medium);
-      color: var(--color-heading);
+      font-weight: var(--fw-bold);
+      color: var(--neon-green);
+      text-shadow: var(--glow-text-green);
     }
   }
 
@@ -138,7 +142,10 @@
     flex-direction: column;
     align-items: flex-end;
     gap: 14px;
-    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--neon-cyan);
+    text-shadow: var(--glow-text-cyan);
     flex: none;
 
     &-line {
@@ -150,7 +157,8 @@
     }
 
     @include hover {
-      color: var(--cyan);
+      color: var(--neon-magenta);
+      text-shadow: var(--glow-text-magenta);
     }
 
     @include mq-down("md") {
@@ -183,14 +191,26 @@
       padding-inline: 36px;
       font-family: var(--display-font);
       font-weight: var(--fw-semibold);
-      font-size: var(--fs-md);
+      font-size: var(--fs-lg);
       letter-spacing: 0.02em;
-      color: var(--color-text-muted);
+      color: var(--color-heading);
       white-space: nowrap;
 
       i {
-        color: var(--cyan);
+        color: var(--neon-cyan);
         font-size: 0.9em;
+        text-shadow: var(--glow-text-cyan);
+      }
+
+      // Cycle the three neon inks across the ticker words.
+      &:nth-child(3n + 1) i {
+        color: var(--neon-green);
+        text-shadow: var(--glow-text-green);
+      }
+
+      &:nth-child(3n + 2) i {
+        color: var(--neon-magenta);
+        text-shadow: var(--glow-text-magenta);
       }
 
       &::after {
