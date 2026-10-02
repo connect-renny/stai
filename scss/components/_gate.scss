@@ -4,8 +4,8 @@
 //  THE GATE — opening screen + boot sequence
 //
 //  Lifecycle (driven by main.js):
-//    .gate.is-held         → behind the preloader: title reveal pinned, video
-//                            paused (App.preloader releases both as it lifts)
+//    .gate.is-held         → behind the curtain: title reveal pinned, video
+//                            paused (App.inauguration releases both as it lifts)
 //    .gate                 → idle, content visible
 //    .gate.is-booting      → content fades, .boot plays
 //    .gate.is-opening      → iris closes to reveal the site beneath

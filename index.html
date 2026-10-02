@@ -24,10 +24,28 @@
     <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="assets/css/swiper-bundle.css" />
     <!-- style.css last — it owns the tokens everything above is themed with. -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261002e" />
+    <link rel="stylesheet" href="assets/css/style.css?v=20261002-launch" />
 
     <script>
       document.documentElement.classList.replace("no-js", "js");
+    </script>
+    <!-- Inauguration curtain: show it unless this session has already seen it.
+         ?launch=1 replays it; ?skip (deep links / QA) never shows it.
+         Runs before first paint so the site never flashes. Set ENABLED to
+         false to switch the curtain off once the launch is over. -->
+    <script>
+      (function () {
+        var ENABLED = true;
+        var q = location.search;
+        if (!ENABLED || /[?&]skip(=|&|$)/.test(q)) return;
+        try {
+          if (/[?&]launch=1(&|$)/.test(q) || !sessionStorage.getItem("stai-launched")) {
+            document.documentElement.classList.add("is-launching");
+          }
+        } catch (e) {
+          document.documentElement.classList.add("is-launching");
+        }
+      })();
     </script>
   </head>
 
@@ -47,24 +65,40 @@
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════
-         PRELOADER — wordmark over a filling bar, counter bottom-right.
-         main.js (App.preloader) wipes it up on `load` (min 2.4s, 5s failsafe),
-         then releases the gate title's blur reveal and starts the video. -->
-    <div class="loader-overlay" id="loader" aria-hidden="true">
-      <p class="loader-tag mono"><span class="hud-dot"></span>STAI 2026 · Future World</p>
-      <div class="loader">
-        <p class="loader-mark" aria-hidden="true">
-          <span class="loader-mark__solid">FUTURE</span>
-          <span class="loader-mark__outline">WORLD</span>
-        </p>
-        <p class="loader-line mono">Initialising future world<span class="loader-dots"></span></p>
+         INAUGURATION CURTAIN — launch ceremony (inauguration branch only).
+         Replaces the preloader. The <head> script decides before first
+         paint whether it shows (once per browser session, ?launch=1
+         replays, ?skip never shows it); App.inauguration in main.js runs
+         the ceremony, then hands over to the gate's boot sequence.
+         ══════════════════════════════════════════════════════════════════ -->
+    <div
+      class="inauguration"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="inaugurationTitle"
+    >
+      <div class="inauguration-stage"></div>
+      <div class="curtain-panel curtain-left"></div>
+      <div class="curtain-panel curtain-right"></div>
+      <div class="inauguration-warmth" aria-hidden="true"></div>
+      <div class="inauguration-beam" aria-hidden="true">
+        <span class="beam-cone"></span>
+        <span class="beam-dust"></span>
       </div>
-      <p class="loader-count mono">
-        <span id="loaderNum">000</span><span class="loader-count__suffix">%</span>
-      </p>
-      <span class="loader-bar" aria-hidden="true"
-        ><span class="loader-bar__fill" id="loaderBar"></span
-      ></span>
+      <div class="curtain-valance" aria-hidden="true"></div>
+
+      <div class="inauguration-content">
+        <span class="inauguration-logo">
+          <img src="assets/images/stai-logo.webp" alt="STAI" width="173" height="192" />
+        </span>
+        <p class="inauguration-eyebrow">Indian School Al Wadi Al Kabir</p>
+        <h2 class="inauguration-title" id="inaugurationTitle">Welcome to STAI 2026</h2>
+        <button type="button" class="inauguration-enter">
+          <span>Enter Site</span>
+        </button>
+      </div>
+
+      <canvas class="inauguration-confetti" aria-hidden="true"></canvas>
     </div>
 
     <!-- ══════════════════════════════════════════════════════════════════
@@ -72,7 +106,7 @@
          ══════════════════════════════════════════════════════════════════ -->
     <div class="gate is-held" id="gate">
       <!-- Landing video backdrop (assets/videos/landing.mp4) -->
-      <!-- No `autoplay`: App.preloader starts it once the overlay lifts. -->
+      <!-- No `autoplay`: App.inauguration starts it once the curtain lifts (or at once on later visits). -->
       <video
         class="gate__video"
         id="gateVideo"
@@ -1490,7 +1524,7 @@
     <script src="assets/js/lenis.min.js" defer></script>
     <script src="assets/js/swiper-bundle.min.js" defer></script>
     <!-- main.js last: it reads window.Lenis and window.Swiper at init. -->
-    <script src="assets/js/main.js?v=20261002e" defer></script>
+    <script src="assets/js/main.js?v=20261002-launch" defer></script>
 
     <!-- ─── SVG sprite for the drift bands (see _drift.scss) ───────────── -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none" aria-hidden="true">

@@ -3,9 +3,9 @@
    main.js — every interactive piece of the site, in one namespace.
 
    Boot order (see App.init at the bottom):
-     cursor → reveal → gate → preloader → clocks → header/drawer → panels →
+     cursor → reveal → gate → inauguration → clocks → header/drawer → panels →
      lab → counters → makers → poll → countdown → resources → outroField → drift → returnTop
-   The preloader holds the gate (title reveal + video) until it lifts;
+   The inauguration curtain holds the gate (title reveal + video) until it lifts;
    Lenis smooth scroll starts only once the gate has opened.
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -448,8 +448,11 @@
 
     enterBtn?.addEventListener("click", run);
     window.addEventListener("keydown", (e) => {
+      // Not while the inauguration curtain is down — its own button owns Enter.
+      if (document.documentElement.classList.contains("is-launching")) return;
       if (e.key === "Enter" && !started) run();
     });
+    App.enterGate = run; // the inauguration curtain hands over here
 
     // ?skip — jump straight to the site (handy for sharing deep links / QA).
     if (new URLSearchParams(location.search).has("skip")) {
@@ -468,106 +471,194 @@
     }
   };
 
-  /* ─── Preloader ──────────────────────────────────────────────────────── */
-  // Counter rolls 000 → 100 over a filling bar while the page loads. The
-  // overlay wipes up once `load` has fired AND the counter has landed (min
-  // 2.4s) — or at 5s regardless, so a stalled asset never traps a visitor.
-  // Lifting it drops `.is-held` from the gate, which releases the title's
-  // blur reveal, and starts the landing video, so both play in view rather
-  // than behind the overlay.
-  App.preloader = () => {
-    const overlay = $("#loader");
+  /* ─── Inauguration curtain (inauguration branch) ─────────────────────── */
+  // Launch ceremony over the home page; replaces the preloader on this branch.
+  // Closed curtain → "Enter Site" → curtains gather to the sides → confetti →
+  // the stage lifts, the gate is released and its boot sequence runs by itself
+  // into the site — one click for the chief guest. The <head> script adds
+  // .is-launching to <html> when the curtain should show (once per session,
+  // ?launch=1 replays). Tune the ceremony here.
+  const LAUNCH = {
+    storageKey: "stai-launched",
+    openDelay: 350, // ms from the click until the curtains start to part
+    openDuration: 1800, // ms for the curtains to gather to the sides
+    celebrate: 1400, // ms of confetti on the open stage before the reveal
+    revealDuration: 1800, // ms for the stage to fade and the drapes to clear
+    bootDelay: 1600, // ms the gate title shows before the boot sequence starts
+    confetti: {
+      pieces: 240, // roughly halved on phones
+      colors: ["#e8a838", "#f7d58c", "#eea403", "#052754", "#ffffff", "#a81d2b"],
+    },
+  };
+
+  App.inauguration = () => {
+    const root = document.documentElement;
+    const overlay = $(".inauguration");
     const gate = $("#gate");
     const video = $("#gateVideo");
-    const num = $("#loaderNum");
-    const bar = $("#loaderBar");
 
-    const release = () => {
+    // Lift the gate's hold: the title blur-reveal plays and the video starts.
+    const releaseGate = () => {
       if (!gate || gate.classList.contains("is-done")) return; // ?skip
       gate.classList.remove("is-held");
       if (video && !REDUCED) video.play().catch(() => {});
     };
 
-    if (!overlay) { release(); return; }
+    if (!overlay || !root.classList.contains("is-launching")) {
+      overlay?.remove();
+      releaseGate();
+      return;
+    }
 
-    const skip = new URLSearchParams(location.search).has("skip");
-    const MIN_SHOW = REDUCED || skip ? 0 : 2400;
-    const COUNT_D = 2000;
-    const FONT_WAIT = 1000; // failsafe: don't hold the intro on a slow font CDN
-    let start = performance.now();
-    let done = false;
-    let raf = 0;
+    const enter = $(".inauguration-enter", overlay);
+    const canvas = $(".inauguration-confetti", overlay);
 
-    const setProgress = (p) => {
-      if (num) num.textContent = String(Math.round(p * 100)).padStart(3, "0");
-      if (bar) bar.style.setProperty("--p", p.toFixed(3));
+    overlay.style.setProperty("--launch-open-delay", `${LAUNCH.openDelay}ms`);
+    overlay.style.setProperty("--launch-open", `${LAUNCH.openDuration}ms`);
+    overlay.style.setProperty("--launch-reveal", `${LAUNCH.revealDuration}ms`);
+    enter.focus({ preventScroll: true });
+
+    // Keep keyboard focus on the button while the curtain is closed.
+    overlay.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") e.preventDefault();
+    });
+
+    const reveal = (duration, onDone) => {
+      overlay.classList.add("is-revealed");
+      overlay.removeAttribute("aria-modal");
+      root.classList.remove("is-launching");
+      releaseGate();
+      document.dispatchEvent(new CustomEvent("stai:launched"));
+      setTimeout(() => App.enterGate?.(), REDUCED ? 300 : LAUNCH.bootDelay);
+      setTimeout(() => onDone?.(), duration);
     };
 
-    const hide = () => {
-      if (done) return;
-      done = true;
-      cancelAnimationFrame(raf);
-      setProgress(1);
+    enter.addEventListener("click", () => {
+      enter.disabled = true;
+      try { sessionStorage.setItem(LAUNCH.storageKey, "1"); } catch (e) {}
 
-      overlay.classList.add("is-hidden");
-      release();
-
-      // Drop it from the DOM (and the a11y tree) once the wipe has finished.
-      let removed = false;
-      const remove = () => {
-        if (removed) return;
-        removed = true;
-        overlay.remove();
-      };
-      overlay.addEventListener("transitionend", remove, { once: true });
-      setTimeout(remove, 1200); // failsafe if the transition never reports
-    };
-
-    // Counter + bar, eased so the last few percent linger before 100.
-    // Starts once the display/mono fonts are in (see `ready` below) so the
-    // wordmark and counter don't paint in the fallback font and jump when
-    // the web font swaps in.
-    const startCount = () => {
-      if (REDUCED || skip) {
-        setProgress(1);
+      if (REDUCED) {
+        reveal(600, () => overlay.remove());
         return;
       }
-      const step = (now) => {
-        const p = clamp((now - start) / COUNT_D, 0, 1);
-        setProgress(easeOut(p));
-        if (p < 1 && !done) raf = requestAnimationFrame(step);
-      };
-      raf = requestAnimationFrame(step);
+
+      overlay.classList.add("is-opening");
+      // Unveil the gate as the drapes part, so FUTURE WORLD blurs in under
+      // the spotlight rather than an empty stage.
+      setTimeout(releaseGate, LAUNCH.openDelay);
+      setTimeout(() => {
+        let confettiDone = false;
+        let revealDone = false;
+        launchConfetti(canvas, LAUNCH.confetti, () => {
+          confettiDone = true;
+          if (revealDone) overlay.remove();
+        });
+        setTimeout(() => {
+          reveal(LAUNCH.revealDuration, () => {
+            revealDone = true;
+            if (confettiDone) overlay.remove();
+          });
+        }, LAUNCH.celebrate);
+      }, LAUNCH.openDelay + LAUNCH.openDuration);
+    }, { once: true });
+  };
+
+  // Paper-cracker burst from both lower corners plus a shower from the top,
+  // drawn on a canvas and stopped once every piece has fallen out of view.
+  const launchConfetti = (canvas, settings, onDone) => {
+    const ctx = canvas.getContext("2d");
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let width, height;
+
+    const resize = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const scale = Math.max(height / 900, 0.6);
+    const total = width < 768 ? Math.round(settings.pieces * 0.55) : settings.pieces;
+    let pieces = [];
+
+    const add = (x, y, angle, speed) => {
+      const shape = Math.random();
+      pieces.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        w: (6 + Math.random() * 6) * (shape < 0.25 ? 0.45 : 1),
+        h: (shape < 0.25 ? 16 : 9) + Math.random() * 5,
+        round: shape > 0.8,
+        color: settings.colors[Math.floor(Math.random() * settings.colors.length)],
+        tilt: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * 0.25,
+        flip: Math.random() * Math.PI * 2,
+        flipSpeed: 0.08 + Math.random() * 0.12,
+      });
     };
 
-    let readied = false;
-    const ready = () => {
-      if (readied || done) return;
-      readied = true;
-      start = performance.now();
-      overlay.classList.add("is-ready");
-      startCount();
+    // Two corner crackers, aimed up and in toward the centre…
+    const burst = Math.round(total * 0.35);
+    for (let i = 0; i < burst; i++) {
+      const spread = (Math.random() - 0.5) * 0.6;
+      const speed = (15 + Math.random() * 12) * scale;
+      add(0, height, -Math.PI / 3 + spread, speed);
+      add(width, height, (-2 * Math.PI) / 3 + spread, speed);
+    }
+    // …and a lighter shower drifting down from above, staggered by height.
+    for (let j = burst * 2; j < total; j++) {
+      add(Math.random() * width, -20 - Math.random() * height * 0.6, Math.PI / 2, (1 + Math.random() * 2) * scale);
+    }
+
+    let last = performance.now();
+    const started = last;
+    const maxTime = 7000;
+
+    const frame = (now) => {
+      const dt = Math.min((now - last) / 16.67, 3);
+      const elapsed = now - started;
+      last = now;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalAlpha = elapsed > maxTime - 800 ? Math.max((maxTime - elapsed) / 800, 0) : 1;
+
+      pieces = pieces.filter((p) => {
+        p.vx *= Math.pow(0.985, dt);
+        p.vy = p.vy * Math.pow(0.985, dt) + 0.32 * scale * dt;
+        p.vy = Math.min(p.vy, 5 * scale); // paper floats, it doesn't plummet
+        p.x += (p.vx + Math.sin(p.flip) * 0.8) * dt;
+        p.y += p.vy * dt;
+        p.tilt += p.spin * dt;
+        p.flip += p.flipSpeed * dt;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.tilt);
+        ctx.scale(1, Math.cos(p.flip));
+        ctx.fillStyle = p.color;
+        if (p.round) {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        }
+        ctx.restore();
+        return p.y < height + 30;
+      });
+
+      if (pieces.length && elapsed < maxTime) {
+        requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0, 0, width, height);
+        window.removeEventListener("resize", resize);
+        onDone();
+      }
     };
-
-    const fontsReady = document.fonts
-      ? Promise.all([
-          document.fonts.load('800 1em "Syne"'),
-          document.fonts.load('600 1em "Syne"'),
-          document.fonts.load('400 1em "JetBrains Mono"'),
-        ])
-      : Promise.resolve();
-    fontsReady.then(ready, ready);
-    setTimeout(ready, FONT_WAIT);
-
-    const hideAfterMin = () => {
-      const remaining = MIN_SHOW - (performance.now() - start);
-      setTimeout(hide, Math.max(skip ? 0 : 300, remaining));
-    };
-
-    // Whichever comes first: the load event (past the minimum hold) or the failsafe.
-    if (document.readyState === "complete") hideAfterMin();
-    else window.addEventListener("load", hideAfterMin, { once: true });
-    setTimeout(hide, 5000);
+    requestAnimationFrame(frame);
   };
 
   /* ─── Lenis smooth scroll + anchor handling ──────────────────────────── */
@@ -1247,7 +1338,7 @@
     App.cursor();
     App.reveal.init();
     App.gate();
-    App.preloader();
+    App.inauguration();
     App.clocks();
     App.header();
     App.drawer.init();

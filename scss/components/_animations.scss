@@ -206,7 +206,7 @@
 //  .blur-after  everything that follows, on `--i` (kicker, tag, CTA, hint)
 //
 //  Held while the nearest `.is-held` ancestor keeps the class (the gate,
-//  behind the preloader); released when it's removed, or on `.is-revealed`.
+//  behind the inauguration curtain); released when it lifts, or on `.is-revealed`.
 // ═══════════════════════════════════════════════════════════════════════════
 
 .blur-line,
@@ -256,7 +256,7 @@
   transform: translateY(0);
 }
 
-// Pinned until the preloader lifts (main.js drops the class)
+// Pinned until the inauguration curtain lifts (main.js drops the class)
 .is-held .blur-line,
 .is-held .blur-after {
   opacity: 0;

@@ -4,3 +4,14 @@
 //  loaded from Google Fonts via <link> in index.html so the browser can start
 //  the request before CSS is parsed. Nothing to declare here.
 // ═══════════════════════════════════════════════════════════════════════════
+
+// Cinzel SemiBold — the inauguration curtain's title only (self-hosted).
+@font-face {
+  font-family: "Cinzel";
+  src:
+    url("../fonts/Cinzel-SemiBold.woff2") format("woff2"),
+    url("../fonts/Cinzel-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}

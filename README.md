@@ -19,6 +19,7 @@ index.html            all sections, in scroll order
 scss/                 source styles (compile → assets/css/style.css)
   base/_root.scss     design tokens (colours, type, spacing, motion)
   components/_gate    landing screen + boot sequence
+  components/_inauguration  launch-ceremony curtain (inauguration branch)
   pages/_*.scss       one partial per section (theme, worlds, lab, mission,
                       makers, vote, countdown, live, outro)
 assets/js/main.js     all behaviour (gate, cursor, smooth scroll, reveals,
@@ -41,9 +42,24 @@ sass scss/style.scss assets/css/style.css --style=expanded --no-source-map
 - **Registration link** — every `href="#register"` scrolls to the outro; the main
   CTA there is a `mailto:` you can point at a form instead.
 
+## Launch curtain (inauguration branch)
+
+For the STAI launch ceremony only — the normal site stays on `main`. The home
+page opens behind a red-velvet theatre curtain with an **Enter Site** button
+(this replaces the preloader). One click parts the curtains, unveils the Future
+World gate under a spotlight, fires confetti, then runs the gate's boot sequence
+by itself into the site.
+
+- Shows once per browser session; `index.html?launch=1` replays it.
+- Switch it off: `ENABLED = false` in the inline script in `index.html`'s `<head>`.
+- Timings and confetti: `LAUNCH` above `App.inauguration` in `assets/js/main.js`.
+- Look: `scss/components/_inauguration.scss` (Cinzel title font in `assets/fonts/`).
+
 ## Handy URL flags
 
-- `index.html?skip` — bypass the landing screen (deep links, QA).
+- `index.html?skip` — bypass the landing screen (deep links, QA). Never shows the
+  launch curtain.
+- `index.html?launch=1` — replay the launch curtain (inauguration branch).
 - `index.html?live` — preview the event-day dashboard. It switches on automatically
   on 15 Oct 2026, and the "Preview live mode" button toggles it any time.
 
