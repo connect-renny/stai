@@ -89,18 +89,35 @@
   @include hover {
     color: var(--color-heading);
 
-    .brand__mark {
-      text-shadow: 0 0 18px rgb(var(--cyan-rgb) / 60%);
+    .brand__logo {
+      filter: drop-shadow(0 0 1px rgb(255 255 255 / 55%))
+        drop-shadow(0 0 14px rgb(var(--cyan-rgb) / 55%));
     }
   }
 
-  &__mark {
-    font-family: var(--display-font);
-    font-weight: var(--fw-black);
-    font-size: 1.6rem;
-    letter-spacing: 0.06em;
-    line-height: 1;
-    transition: text-shadow 0.4s ease;
+  // Client logo (white background removed). The soft light halo keeps the
+  // navy rings and purple lettering legible on the dark header.
+  &__logo {
+    display: block;
+    height: 90px;
+    width: auto;
+    margin-top: 20px;
+    filter: drop-shadow(0 0 1px rgb(255 255 255 / 45%))
+      drop-shadow(0 0 8px rgb(var(--cyan-rgb) / 25%));
+    transition:
+      height 0.4s var(--ease-out),
+      margin 0.4s var(--ease-out),
+      filter 0.4s ease;
+
+    .header.is-scrolled & {
+      height: 48px;
+      margin-top: 0;
+    }
+
+    @include mq-down("sm") {
+      height: 46px;
+      margin-top: 0;
+    }
   }
 
   &__meta {
@@ -137,6 +154,7 @@
 // ─── Desktop nav ───────────────────────────────────────────────────────────
 .nav {
   display: none;
+  flex-wrap: nowrap; // Bootstrap's .nav sets wrap — keep the links on one line
   align-items: center;
   gap: 2px;
 
@@ -154,6 +172,17 @@
     font-weight: var(--fw-semibold);
     color: var(--color-text);
     letter-spacing: 0.01em;
+    white-space: nowrap;
+
+    // 7 links only just fit at 1200–1399px — tighten them there
+    @include mq-between("xl", "xxl") {
+      padding-inline: 8px;
+
+      &::after {
+        left: 8px;
+        right: 8px;
+      }
+    }
 
     .mono {
       font-size: 0.7rem;

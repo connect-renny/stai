@@ -232,3 +232,142 @@
     }
   }
 }
+
+// ─── Intro film (inside the theme section, above the ticker) ──────────────
+.film {
+  position: relative;
+  max-width: 1080px;
+  margin: 0 auto clamp(56px, 8vw, 104px);
+  aspect-ratio: 16 / 9;
+  border: 1px solid rgb(var(--cyan-rgb) / 30%);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: #060913;
+  box-shadow:
+    0 40px 80px -30px rgb(0 0 0 / 80%),
+    0 0 60px rgb(var(--cyan-rgb) / 14%);
+
+  &__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    // Fullscreen sits above the custom cursor — show the native pointer
+    .js.has-cursor &:fullscreen {
+      cursor: auto;
+    }
+  }
+
+  // Poster overlay: play button + caption. Removed once playback starts.
+  &__play {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(14px, 2vw, 22px);
+    padding: 0;
+    border: 0;
+    background: linear-gradient(180deg, rgb(6 9 19 / 5%) 40%, rgb(6 9 19 / 75%));
+    color: var(--color-heading);
+    cursor: pointer;
+    transition: opacity 0.5s ease, visibility 0s linear 0s;
+
+    .film.is-playing & {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0s linear 0.5s;
+    }
+
+    @include hover {
+      .film__btn {
+        transform: scale(1.08);
+        box-shadow:
+          0 0 0 10px rgb(var(--cyan-rgb) / 12%),
+          0 0 50px rgb(var(--cyan-rgb) / 60%);
+      }
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+      outline-offset: -6px;
+    }
+  }
+
+  &__btn {
+    display: grid;
+    place-items: center;
+    width: clamp(64px, 9vw, 104px);
+    aspect-ratio: 1;
+    border: 1px solid rgb(var(--cyan-rgb) / 70%);
+    border-radius: 50%;
+    background: rgb(6 9 19 / 55%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: var(--neon-cyan);
+    box-shadow:
+      0 0 0 6px rgb(var(--cyan-rgb) / 8%),
+      0 0 30px rgb(var(--cyan-rgb) / 35%);
+    transition:
+      transform 0.4s var(--ease-out),
+      box-shadow 0.4s ease;
+    animation: filmPulse 2.6s ease-in-out infinite;
+
+    i {
+      translate: 6% 0; // optical centre of the triangle
+    }
+  }
+
+  &__caption {
+    position: absolute;
+    left: clamp(16px, 3vw, 32px);
+    bottom: clamp(14px, 2.5vw, 28px);
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    text-align: left;
+  }
+
+  &__kicker {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--neon-green);
+    text-shadow: var(--glow-text-green);
+  }
+
+  &__title {
+    font-family: var(--display-font);
+    font-weight: var(--fw-bold);
+    font-size: #{fluid(18, 28)};
+    color: var(--color-heading);
+
+    @include mq-down("sm") {
+      display: none;
+    }
+  }
+
+  &__time {
+    font-size: var(--fs-sm);
+    color: var(--neon-cyan);
+  }
+}
+
+@keyframes filmPulse {
+  50% {
+    box-shadow:
+      0 0 0 14px rgb(var(--cyan-rgb) / 4%),
+      0 0 40px rgb(var(--cyan-rgb) / 45%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film__btn {
+    animation: none;
+  }
+}

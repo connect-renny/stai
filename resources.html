@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css" />
     <!-- style.css last — it owns the tokens everything above is themed with. -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20260923f" />
+    <link rel="stylesheet" href="assets/css/style.css?v=20261002e" />
 
     <script>
       document.documentElement.classList.replace("no-js", "js");
@@ -50,7 +50,7 @@
       <header class="header" id="header">
         <div class="header__inner">
           <a class="brand" href="index.html?skip" aria-label="STAI 2026 home">
-            <span class="brand__mark">STAI</span>
+            <img class="brand__logo" src="assets/images/stai-logo.webp" width="173" height="192" alt="STAI" decoding="async" />
             <span class="brand__meta">
               <span class="brand__year mono">2026</span>
               <span class="brand__line">Science · Technology · Innovation</span>
@@ -58,19 +58,39 @@
           </a>
 
           <nav class="nav" aria-label="Primary">
-            <a href="index.html?skip#worlds" class="nav__link"><span class="mono">01</span>Worlds</a>
-            <a href="index.html?skip#lab" class="nav__link"><span class="mono">02</span>Future Lab</a>
-            <a href="index.html?skip#mission" class="nav__link"><span class="mono">03</span>Mission</a>
-            <a href="index.html?skip#makers" class="nav__link"><span class="mono">04</span>Makers</a>
+            <a href="index.html?skip#worlds" class="nav__link"
+              ><span class="mono">01</span>Worlds</a
+            >
+            <a href="index.html?skip#lab" class="nav__link"
+              ><span class="mono">02</span>Future Lab</a
+            >
+            <a href="index.html?skip#mission" class="nav__link"
+              ><span class="mono">03</span>Mission</a
+            >
+            <a href="index.html?skip#makers" class="nav__link"
+              ><span class="mono">04</span>Makers</a
+            >
             <a href="index.html?skip#vote" class="nav__link"><span class="mono">05</span>Vote</a>
-            <a href="index.html?skip#countdown" class="nav__link"><span class="mono">06</span>Countdown</a>
+            <a href="index.html?skip#countdown" class="nav__link"
+              ><span class="mono">06</span>Countdown</a
+            >
+            <a href="index.html?skip#handbook" class="nav__link"
+              ><span class="mono">07</span>Handbook</a
+            >
           </nav>
 
           <div class="header__actions">
             <!-- <a href="index.html?skip#register" class="btn btn--ghost btn--sm" data-cursor="hover">
               <span>Register</span><i class="bi bi-arrow-up-right"></i>
             </a> -->
-            <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer">
+            <button
+              class="burger"
+              id="burger"
+              type="button"
+              aria-label="Open menu"
+              aria-expanded="false"
+              aria-controls="drawer"
+            >
               <span></span><span></span>
             </button>
           </div>
@@ -80,7 +100,13 @@
 
       <!-- Mobile drawer -->
       <div class="drawer" id="drawer" aria-hidden="true">
-        <button class="drawer__close" id="drawerClose" type="button" aria-label="Close menu" data-cursor="hover">
+        <button
+          class="drawer__close"
+          id="drawerClose"
+          type="button"
+          aria-label="Close menu"
+          data-cursor="hover"
+        >
           <i class="bi bi-x-lg"></i>
         </button>
         <div class="drawer__inner">
@@ -92,6 +118,7 @@
             <a href="index.html?skip#makers"><span class="mono">04</span>Future Makers</a>
             <a href="index.html?skip#vote"><span class="mono">05</span>Build the Future</a>
             <a href="index.html?skip#countdown"><span class="mono">06</span>Countdown</a>
+            <a href="index.html?skip#handbook"><span class="mono">07</span>Handbook</a>
           </nav>
           <a href="index.html?skip#register" class="btn btn--primary drawer__cta">
             <span>Register</span><i class="bi bi-arrow-up-right"></i>
@@ -105,15 +132,21 @@
         <section class="resources" id="resources" aria-labelledby="resTitle">
           <div class="container">
             <div class="resources__head">
-              <a href="index.html?skip#worlds" class="resources__back" data-cursor="hover"><i class="bi bi-arrow-left"></i>Back to Future World</a>
+              <a href="index.html?skip#worlds" class="resources__back" data-cursor="hover"
+                ><i class="bi bi-arrow-left"></i>Back to Future World</a
+              >
               <p class="label label--neon mono" data-reveal="fade">
                 <span class="label__num">STAI</span>
                 <span class="label__line"></span>
                 <span>Resource hub</span>
               </p>
               <h1 class="resources__title" id="resTitle" data-reveal>
-                <span class="resources__title-icon" aria-hidden="true"><i class="bi bi-cpu" id="resTopicIcon"></i></span>
-                <span>Explore <span class="grad" id="resTopicName">Artificial Intelligence</span></span>
+                <span class="resources__title-icon" aria-hidden="true"
+                  ><i class="bi bi-cpu" id="resTopicIcon"></i
+                ></span>
+                <span
+                  >Explore <span class="grad" id="resTopicName">Artificial Intelligence</span></span
+                >
               </h1>
               <p class="resources__q" id="resTopicQ" data-reveal style="--reveal-delay: 100ms"></p>
             </div>
@@ -141,12 +174,15 @@
             <a href="index.html?skip#lab">Future Lab</a>
             <a href="index.html?skip#mission">Mission</a>
             <a href="index.html?skip#countdown">Countdown</a>
+            <a href="index.html?skip#handbook">Handbook</a>
           </nav>
           <div class="footer__social">
             <a href="#" aria-label="X" data-cursor="hover"><i class="bi bi-twitter-x"></i></a>
             <a href="#" aria-label="Facebook" data-cursor="hover"><i class="bi bi-facebook"></i></a>
             <a href="#" aria-label="LinkedIn" data-cursor="hover"><i class="bi bi-linkedin"></i></a>
-            <a href="#" aria-label="Instagram" data-cursor="hover"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="Instagram" data-cursor="hover"
+              ><i class="bi bi-instagram"></i
+            ></a>
             <a href="#" aria-label="YouTube" data-cursor="hover"><i class="bi bi-youtube"></i></a>
           </div>
         </div>
@@ -160,6 +196,6 @@
     <script src="assets/js/lenis.min.js" defer></script>
     <!-- Resource entries first — main.js reads window.STAI_RESOURCES at init. -->
     <script src="assets/js/resources-data.js?v=20260923f" defer></script>
-    <script src="assets/js/main.js?v=20260923f" defer></script>
+    <script src="assets/js/main.js?v=20261002e" defer></script>
   </body>
 </html>

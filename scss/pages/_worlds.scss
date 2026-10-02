@@ -166,7 +166,8 @@
     line-height: 1;
     letter-spacing: -0.03em;
     text-transform: uppercase;
-    color: var(--color-heading);
+    color: var(--accent);
+    text-shadow: 0 0 18px color-mix(in srgb, var(--accent) 35%, transparent);
   }
 
   &__text {
