@@ -505,6 +505,41 @@ $beam-light: rgb(255, 234, 186);
   pointer-events: none;
 }
 
+// ─── Keep the stage light while the curtain is up ───────────────────────────
+// The gate behind the curtain has its own always-on effects; the nebula is an
+// oversized layer under a 40px blur. Hold it still until the curtain lifts.
+.is-launching .gate__nebula {
+  animation-play-state: paused;
+}
+
+// ─── Firefox ─────────────────────────────────────────────────────────────────
+// Firefox repaints blend-mode layers and filtered elements on the CPU each
+// frame, which starves the confetti canvas (it looked frozen). Same light,
+// drawn without blend modes or the blur filter.
+@supports (-moz-appearance: none) {
+  .inauguration-warmth {
+    mix-blend-mode: normal;
+    opacity: 0.35;
+  }
+
+  .inauguration-beam {
+    mix-blend-mode: normal;
+    opacity: 0.55;
+
+    .beam-cone {
+      filter: none;
+    }
+
+    .is-opening & {
+      opacity: 0.7;
+    }
+
+    .is-revealed & {
+      opacity: 0;
+    }
+  }
+}
+
 // ─── Small screens ───────────────────────────────────────────────────────────
 @media (max-width: 575px) {
   .inauguration {

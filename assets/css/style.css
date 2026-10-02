@@ -1757,6 +1757,29 @@ section {
   pointer-events: none;
 }
 
+.is-launching .gate__nebula {
+  animation-play-state: paused;
+}
+
+@supports (-moz-appearance: none) {
+  .inauguration-warmth {
+    mix-blend-mode: normal;
+    opacity: 0.35;
+  }
+  .inauguration-beam {
+    mix-blend-mode: normal;
+    opacity: 0.55;
+  }
+  .inauguration-beam .beam-cone {
+    filter: none;
+  }
+  .is-opening .inauguration-beam {
+    opacity: 0.7;
+  }
+  .is-revealed .inauguration-beam {
+    opacity: 0;
+  }
+}
 @media (max-width: 575px) {
   .inauguration {
     --gather: 0.16;

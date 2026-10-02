@@ -495,11 +495,12 @@
     const gate = $("#gate");
     const video = $("#gateVideo");
 
-    // Lift the gate's hold: the title blur-reveal plays and the video starts.
-    const releaseGate = () => {
+    // Lift the gate's hold: the title blur-reveal plays and, unless told
+    // otherwise, the video starts.
+    const releaseGate = (playVideo = true) => {
       if (!gate || gate.classList.contains("is-done")) return; // ?skip
       gate.classList.remove("is-held");
-      if (video && !REDUCED) video.play().catch(() => {});
+      if (playVideo && video && !REDUCED) video.play().catch(() => {});
     };
 
     if (!overlay || !root.classList.contains("is-launching")) {
@@ -543,8 +544,10 @@
 
       overlay.classList.add("is-opening");
       // Unveil the gate as the drapes part, so FUTURE WORLD blurs in under
-      // the spotlight rather than an empty stage.
-      setTimeout(releaseGate, LAUNCH.openDelay);
+      // the spotlight rather than an empty stage. The video waits for the
+      // reveal: decoding it under the curtain's blend layers starves the
+      // confetti of frames in Firefox.
+      setTimeout(() => releaseGate(false), LAUNCH.openDelay);
       setTimeout(() => {
         let confettiDone = false;
         let revealDone = false;
@@ -566,7 +569,7 @@
   // drawn on a canvas and stopped once every piece has fallen out of view.
   const launchConfetti = (canvas, settings, onDone) => {
     const ctx = canvas.getContext("2d");
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5); // full-screen canvas: keep fill cost down
     let width, height;
 
     const resize = () => {
@@ -618,7 +621,9 @@
     const maxTime = 7000;
 
     const frame = (now) => {
-      const dt = Math.min((now - last) / 16.67, 3);
+      // Time-based steps (cap ~100ms) so a slow frame skips ahead instead of
+      // playing in slow motion.
+      const dt = Math.min((now - last) / 16.67, 6);
       const elapsed = now - started;
       last = now;
       ctx.clearRect(0, 0, width, height);
