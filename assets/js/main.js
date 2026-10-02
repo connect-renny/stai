@@ -1194,42 +1194,6 @@
     ).observe(wrap);
   };
 
-  /* ─── Handbook viewer (native <dialog>: Esc + focus trap for free) ───── */
-  App.handbook = () => {
-    const dlg = $("#handbookViewer");
-    if (!dlg || typeof dlg.showModal !== "function") return;
-    let opener = null;
-
-    // A lazy <img> inside a closed <dialog> only loads once it opens, so warm
-    // the full-size image up as soon as the section nears the viewport.
-    const full = $("img", dlg);
-    const section = $("#handbook");
-    if (full && section) {
-      const io = new IntersectionObserver(([en]) => {
-        if (!en.isIntersecting) return;
-        full.loading = "eager";
-        io.disconnect();
-      }, { rootMargin: "600px 0px" });
-      io.observe(section);
-    }
-
-    $$("[data-handbook-open]").forEach((btn) =>
-      btn.addEventListener("click", () => {
-        opener = btn;
-        dlg.showModal();
-        dlg.scrollTop = 0;
-        lenis?.stop();
-      })
-    );
-    $("[data-handbook-close]", dlg)?.addEventListener("click", () => dlg.close());
-    // Click on the dimmed area (not the image) closes it
-    dlg.addEventListener("click", (e) => e.target === dlg && dlg.close());
-    dlg.addEventListener("close", () => {
-      lenis?.start();
-      opener?.focus({ preventScroll: true });
-    });
-  };
-
   /* ─── Back to top ────────────────────────────────────────────────────── */
   App.returnTop = () => {
     const btn = $("#returnTop");
@@ -1258,7 +1222,6 @@
     App.makers();
     App.poll();
     App.countdown();
-    App.handbook();
     App.introFilm();
     App.resources();
     App.outroField();

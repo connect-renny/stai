@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="assets/css/swiper-bundle.css" />
     <!-- style.css last — it owns the tokens everything above is themed with. -->
-    <link rel="stylesheet" href="assets/css/style.css?v=20261002e" />
+    <link rel="stylesheet" href="assets/css/style.css?v=20261002f" />
 
     <script>
       document.documentElement.classList.replace("no-js", "js");
@@ -1331,24 +1331,25 @@
             </div>
 
             <div class="handbook__grid">
-              <button
+              <a
                 class="handbook__cover"
-                type="button"
-                data-handbook-open
+                href="assets/docs/stai-2026-handbook.pdf"
+                target="_blank"
+                rel="noopener"
                 data-cursor="hover"
                 data-reveal="zoom"
-                aria-label="Open the STAI 2026 handbook"
+                aria-label="Open the STAI 2026 handbook (PDF, opens in a new tab)"
               >
                 <img
-                  src="assets/images/stai-handbook-thumb.webp"
-                  alt="STAI 2026 handbook — Science, Technology, Innovation, 23 and 24 October 2026"
+                  src="assets/images/stai-2026-handbook-cover.webp"
+                  alt="STAI 2026 handbook cover — Indian School Al Wadi Al Kabir presents STAI 2026, Science Technology and Innovation"
                   width="640"
-                  height="800"
+                  height="905"
                   loading="lazy"
                   decoding="async"
                 />
-                <span class="handbook__hint mono"><i class="bi bi-arrows-fullscreen"></i>Click to open</span>
-              </button>
+                <span class="handbook__hint mono"><i class="bi bi-book"></i>Click to open</span>
+              </a>
 
               <div class="handbook__body" data-reveal>
                 <p class="handbook__lead">
@@ -1357,35 +1358,28 @@
                 </p>
                 <p class="handbook__meta mono">23–24 October 2026 · ISWK</p>
                 <div class="handbook__actions">
-                  <button class="btn btn--primary btn--lg" type="button" data-handbook-open data-cursor="hover">
+                  <a
+                    class="btn btn--primary btn--lg"
+                    href="assets/docs/stai-2026-handbook.pdf"
+                    target="_blank"
+                    rel="noopener"
+                    data-cursor="hover"
+                  >
                     <span>View handbook</span><i class="bi bi-book"></i>
-                  </button>
+                  </a>
                   <a
                     class="btn btn--ghost btn--lg"
-                    href="assets/images/stai-handbook.jpg"
-                    download="STAI-2026-Handbook.jpg"
+                    href="assets/docs/stai-2026-handbook.pdf"
+                    download="STAI-2026-Handbook.pdf"
                     data-cursor="hover"
                   >
                     <span>Download</span><i class="bi bi-download"></i>
                   </a>
                 </div>
+                <p class="handbook__file mono">PDF · 52 pages · 22 MB</p>
               </div>
             </div>
           </div>
-
-          <dialog class="handbook__viewer" id="handbookViewer" aria-label="STAI 2026 handbook" data-lenis-prevent>
-            <button class="handbook__close" type="button" data-handbook-close aria-label="Close handbook">
-              <i class="bi bi-x-lg"></i>
-            </button>
-            <img
-              src="assets/images/stai-handbook.webp"
-              alt="STAI 2026 handbook — Science, Technology, Innovation, 23 and 24 October 2026"
-              width="1227"
-              height="1533"
-              loading="lazy"
-              decoding="async"
-            />
-          </dialog>
         </section>
 
         <!-- ─── drift · 07 → 08 · horizon + rays ────────────────────── -->
@@ -1490,7 +1484,7 @@
     <script src="assets/js/lenis.min.js" defer></script>
     <script src="assets/js/swiper-bundle.min.js" defer></script>
     <!-- main.js last: it reads window.Lenis and window.Swiper at init. -->
-    <script src="assets/js/main.js?v=20261002e" defer></script>
+    <script src="assets/js/main.js?v=20261002f" defer></script>
 
     <!-- ─── SVG sprite for the drift bands (see _drift.scss) ───────────── -->
     <svg xmlns="http://www.w3.org/2000/svg" style="display: none" aria-hidden="true">

@@ -1,7 +1,7 @@
 @use "../abstracts" as *;
 
 // ═══════════════════════════════════════════════════════════════════════════
-//  08 · HANDBOOK — cover preview + click-to-open full-size viewer (<dialog>)
+//  08 · HANDBOOK — cover preview linking to the handbook PDF
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Countdown → Handbook read as one block: trim the double section padding
@@ -44,7 +44,7 @@
     border-radius: var(--radius-lg);
     overflow: hidden;
     background: none;
-    cursor: zoom-in;
+    cursor: pointer;
     box-shadow:
       0 30px 60px -20px rgb(0 0 0 / 70%),
       0 0 40px rgb(var(--cyan-rgb) / 18%);
@@ -139,6 +139,12 @@
     text-shadow: var(--glow-text-green);
   }
 
+  &__file {
+    margin-top: 14px;
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+  }
+
   &__actions {
     display: flex;
     flex-wrap: wrap;
@@ -149,90 +155,5 @@
     @include mq-up("md") {
       justify-content: flex-start;
     }
-  }
-
-  // ─── Full-size viewer ────────────────────────────────────────────────────
-  &__viewer {
-    width: 100vw;
-    max-width: 100vw;
-    height: 100dvh;
-    max-height: 100dvh;
-    margin: 0;
-    padding: clamp(56px, 7vw, 72px) var(--container-gutter) var(--container-gutter);
-    border: 0;
-    background: transparent;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: rgb(var(--cyan-rgb) / 60%) transparent;
-
-    // The dialog renders in the browser's top layer, above the custom cursor,
-    // so bring the native pointer back while it is open.
-    .js.has-cursor & {
-      cursor: zoom-out;
-
-      img {
-        cursor: default;
-      }
-
-      .handbook__close {
-        cursor: pointer;
-      }
-    }
-
-    &::backdrop {
-      background: rgb(6 9 19 / 92%);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-    }
-
-    &[open] {
-      animation: handbook-in 0.4s var(--ease-out);
-    }
-
-    img {
-      display: block;
-      width: auto;
-      max-width: min(100%, 900px);
-      height: auto;
-      margin-inline: auto;
-      border-radius: var(--radius-md);
-      box-shadow: 0 0 60px rgb(var(--cyan-rgb) / 20%);
-    }
-  }
-
-  &__close {
-    position: fixed;
-    top: 14px;
-    right: var(--container-gutter);
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--color-border-strong);
-    border-radius: 50%;
-    background: rgb(6 9 19 / 80%);
-    color: var(--color-heading);
-    font-size: 1.1rem;
-    cursor: pointer;
-    transition:
-      border-color 0.3s ease,
-      color 0.3s ease;
-
-    @include hover {
-      border-color: var(--neon-cyan);
-      color: var(--neon-cyan);
-    }
-
-    &:focus-visible {
-      @include focus-ring;
-    }
-  }
-}
-
-@keyframes handbook-in {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
   }
 }
