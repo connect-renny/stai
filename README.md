@@ -47,8 +47,8 @@ sass scss/style.scss assets/css/style.css --style=expanded --no-source-map
 For the STAI launch ceremony only — the normal site stays on `main`. The home
 page opens behind a red-velvet theatre curtain with an **Enter Site** button
 (this replaces the preloader). One click parts the curtains, unveils the Future
-World gate under a spotlight, fires confetti, then runs the gate's boot sequence
-by itself into the site.
+World gate under a spotlight and fires confetti. The gate then waits as usual:
+the site opens only when someone presses **Enter the Future**.
 
 - Shows once per browser session; `index.html?launch=1` replays it.
 - Switch it off: `ENABLED = false` in the inline script in `index.html`'s `<head>`.

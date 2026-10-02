@@ -452,7 +452,6 @@
       if (document.documentElement.classList.contains("is-launching")) return;
       if (e.key === "Enter" && !started) run();
     });
-    App.enterGate = run; // the inauguration curtain hands over here
 
     // ?skip — jump straight to the site (handy for sharing deep links / QA).
     if (new URLSearchParams(location.search).has("skip")) {
@@ -474,8 +473,8 @@
   /* ─── Inauguration curtain (inauguration branch) ─────────────────────── */
   // Launch ceremony over the home page; replaces the preloader on this branch.
   // Closed curtain → "Enter Site" → curtains gather to the sides → confetti →
-  // the stage lifts, the gate is released and its boot sequence runs by itself
-  // into the site — one click for the chief guest. The <head> script adds
+  // the stage lifts on the Future World gate, which then waits for "Enter the
+  // Future" as usual before the site opens. The <head> script adds
   // .is-launching to <html> when the curtain should show (once per session,
   // ?launch=1 replays). Tune the ceremony here.
   const LAUNCH = {
@@ -484,7 +483,6 @@
     openDuration: 1800, // ms for the curtains to gather to the sides
     celebrate: 1400, // ms of confetti on the open stage before the reveal
     revealDuration: 1800, // ms for the stage to fade and the drapes to clear
-    bootDelay: 1600, // ms the gate title shows before the boot sequence starts
     confetti: {
       pieces: 240, // roughly halved on phones
       colors: ["#e8a838", "#f7d58c", "#eea403", "#052754", "#ffffff", "#a81d2b"],
@@ -529,7 +527,8 @@
       root.classList.remove("is-launching");
       releaseGate();
       document.dispatchEvent(new CustomEvent("stai:launched"));
-      setTimeout(() => App.enterGate?.(), REDUCED ? 300 : LAUNCH.bootDelay);
+      // Hand keyboard focus to the gate's button: Enter now opens the site.
+      $("#enterBtn")?.focus({ preventScroll: true });
       setTimeout(() => onDone?.(), duration);
     };
 
