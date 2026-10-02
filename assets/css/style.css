@@ -4611,11 +4611,6 @@ html.lenis body {
   color: var(--neon-green);
   text-shadow: var(--glow-text-green);
 }
-.handbook__file {
-  margin-top: 14px;
-  font-size: var(--fs-sm);
-  color: var(--color-text-muted);
-}
 .handbook__actions {
   display: flex;
   flex-wrap: wrap;
